@@ -55,7 +55,6 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-//todo remove this test line
 class MainActivity : AppCompatActivity() {
 //    private lateinit var binding: ActivityMainBinding
 //    private lateinit var manager: LinearLayoutManager
