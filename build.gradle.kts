@@ -14,6 +14,7 @@ allprojects {
         mavenLocal()
         mavenCentral()
     }
+    
 }
 
 fun isNonStable(candidate: ModuleComponentIdentifier): Boolean {

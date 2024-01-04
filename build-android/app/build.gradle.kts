@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.google.firebase.codelab.friendlychat"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -61,6 +61,15 @@ android {
 }
 
 dependencies {
+    // GPS
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    // Gson
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    //Main activity
+    implementation("androidx.activity:activity-ktx:1.8.2")
+
     //Navigation
     implementation("androidx.navigation:navigation-compose:2.4.0")
 

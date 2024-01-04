@@ -55,6 +55,10 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.firebase.codelab.friendlychat.data.networking.LocationDataSource
+import com.google.firebase.codelab.friendlychat.data.sensors.GpsManager
+import kotlinx.coroutines.runBlocking
+
 class MainActivity : AppCompatActivity() {
 //    private lateinit var binding: ActivityMainBinding
 //    private lateinit var manager: LinearLayoutManager
@@ -64,12 +68,24 @@ class MainActivity : AppCompatActivity() {
     private lateinit var db: FirebaseDatabase
 //    private lateinit var adapter: FriendlyMessageAdapter
 
+    private lateinit var gpsManager: GpsManager
+
     private val openDocument = registerForActivityResult(MyOpenDocumentContract()) { uri ->
         uri?.let { onImageSelected(it) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        gpsManager = GpsManager(this) { location ->
+            Log.d("MainActivity","Location = ${location.toString() ?: "Loading"}")
+            runBlocking {
+                val geoLocationResult = LocationDataSource.getLocation(location.latitude,location.longitude)
+                geoLocationResult.let{
+                    val address = it?.results?.first()?.formatted_address
+                    Log.d("MainActivity","Geolocation = ${address?:"Address is null"}")
+                }
+            }
+        }
         setContent { //TODO FROM CAMPUS
             val navController = rememberNavController()
             val vm: ChatVM = viewModel()
