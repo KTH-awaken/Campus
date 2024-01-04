@@ -15,23 +15,10 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        //från Campus
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildFeatures {
         viewBinding = true
-    }
-    //från Campus
-    buildFeatures {
-        compose = true
-    }
-    //från Campus
-    composeOptions {
-//        kotlinCompilerExtensionVersion = "1.4.3"//från Campus
-        kotlinCompilerExtensionVersion = "1.5.7"//från devAndoid hemidian
     }
 
     buildTypes {
@@ -61,9 +48,6 @@ android {
 }
 
 dependencies {
-    //To show profile picture with rememberImagePainter that takes imageUrl
-    implementation("io.coil-kt:coil-compose:1.4.0") // todo Check for the latest version
-
     // GPS
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
@@ -72,9 +56,6 @@ dependencies {
 
     //Main activity
     implementation("androidx.activity:activity-ktx:1.8.2")
-
-    //Navigation
-    implementation("androidx.navigation:navigation-compose:2.4.0")
 
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
@@ -95,11 +76,7 @@ dependencies {
     // Firebase UI
     implementation("com.firebaseui:firebase-ui-auth:8.0.2")
     implementation("com.firebaseui:firebase-ui-database:8.0.2")
-    implementation("androidx.compose.material3:material3:1.1.2")
-
-    //för att få den att fungera kommer från build starts gradel
-//    implementation(project(mapOf("path" to ":build-android:app")))
-
+    implementation(project(mapOf("path" to ":build-android:app")))
 
     // Testing dependencies
     testImplementation("junit:junit:4.13.2")
@@ -108,4 +85,3 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.test:rules:1.5.0")
 }
-

@@ -51,6 +51,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.firebase.codelab.friendlychat.ui.screens.Chat
 
+import com.google.firebase.codelab.friendlychat.data.networking.LocationDataSource
+import com.google.firebase.codelab.friendlychat.data.sensors.GpsManager
+import kotlinx.coroutines.runBlocking
+
 class MainActivity : AppCompatActivity() {
 //    private lateinit var binding: ActivityMainBinding
 //    private lateinit var manager: LinearLayoutManager
@@ -60,12 +64,43 @@ class MainActivity : AppCompatActivity() {
     private lateinit var db: FirebaseDatabase
 //    private lateinit var adapter: FriendlyMessageAdapter
 
+    private lateinit var gpsManager: GpsManager
+
     private val openDocument = registerForActivityResult(MyOpenDocumentContract()) { uri ->
         uri?.let { onImageSelected(it) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        gpsManager = GpsManager(this) { location ->
+            Log.d("MainActivity","Location = ${location.toString() ?: "Loading"}")
+            runBlocking {
+                val geoLocationResult = LocationDataSource.getLocation(location.latitude,location.longitude)
+                geoLocationResult.let{
+                    val address = it?.results?.first()?.formatted_address
+                    Log.d("MainActivity","Geolocation = ${address?:"Address is null"}")
+                }
+            }
+        }
+        setContent { //TODO FROM CAMPUS
+            val navController = rememberNavController()
+            val vm: ChatVM = viewModel()
+            val darkMode by vm.darkMode.collectAsState()
+            CampusTheme(darkTheme = darkMode){
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    NavigationGraph(navController = navController, vm = vm )
+                }
+            }
+        }
+//        // This codelab uses View Binding
+//        // See: https://developer.android.com/topic/libraries/view-binding
+//        binding = ActivityMainBinding.inflate(layoutInflater)
+//        setContentView(binding.root)
+
+
 
         // Initialize Firebase Auth and check if the user is signed in
         auth = Firebase.auth
