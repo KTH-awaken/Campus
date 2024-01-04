@@ -67,6 +67,7 @@ dependencies {
     // Firebase UI
     implementation("com.firebaseui:firebase-ui-auth:8.0.2")
     implementation("com.firebaseui:firebase-ui-database:8.0.2")
+    implementation(project(mapOf("path" to ":build-android:app")))
 
     // Testing dependencies
     testImplementation("junit:junit:4.13.2")
