@@ -21,8 +21,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.Surface
-import android.widget.ProgressBar
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,20 +31,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.campus.ui.screens.Home
 import com.example.campus.ui.screens.Settings
 import com.example.campus.ui.theme.CampusTheme
 import com.example.campus.ui.viewmodels.ChatVM
 import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.codelab.friendlychat.databinding.ActivityMainBinding
-import com.google.firebase.codelab.friendlychat.model.FriendlyMessage
+import com.google.firebase.codelab.friendlychat.model.Message
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
@@ -55,6 +49,8 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.firebase.codelab.friendlychat.ui.screens.Chat
+
 class MainActivity : AppCompatActivity() {
 //    private lateinit var binding: ActivityMainBinding
 //    private lateinit var manager: LinearLayoutManager
@@ -70,25 +66,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { //TODO FROM CAMPUS
-            val navController = rememberNavController()
-            val vm: ChatVM = viewModel()
-            val darkMode by vm.darkMode.collectAsState()
-            CampusTheme(darkTheme = darkMode){
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    NavigationGraph(navController = navController, vm = vm )
-                }
-            }
-        }
-//        // This codelab uses View Binding
-//        // See: https://developer.android.com/topic/libraries/view-binding
-//        binding = ActivityMainBinding.inflate(layoutInflater)
-//        setContentView(binding.root)
-
-
 
         // Initialize Firebase Auth and check if the user is signed in
         auth = Firebase.auth
@@ -103,8 +80,23 @@ class MainActivity : AppCompatActivity() {
         db = Firebase.database
         val messagesRef = db.reference.child(MESSAGES_CHILD)
 
-        oldViewBining(db, messagesRef)
 
+
+        setContent {
+            val navController = rememberNavController()
+            val vm: ChatVM = viewModel {
+                ChatVM(db, messagesRef, auth)
+            }
+            val darkMode by vm.darkMode.collectAsState()
+            CampusTheme(darkTheme = darkMode){
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    NavigationGraph(navController = navController, vm = vm )
+                }
+            }
+        }
     }
 
     public fun oldViewBining(db: FirebaseDatabase, messagesRef: DatabaseReference){
@@ -170,8 +162,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        val inflater = menuInflater
-//        inflater.inflate(R.menu.main_menu, menu)
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
@@ -188,7 +180,7 @@ class MainActivity : AppCompatActivity() {
     private fun onImageSelected(uri: Uri) {
         Log.d(TAG, "Uri: $uri")
         val user = auth.currentUser
-        val tempMessage = FriendlyMessage(null, getUserName(), getPhotoUrl(), LOADING_IMAGE_URL)
+        val tempMessage = Message(null, getUserName(), getPhotoUrl(), LOADING_IMAGE_URL)
         db.reference
                 .child(MESSAGES_CHILD)
                 .push()
@@ -222,12 +214,12 @@ class MainActivity : AppCompatActivity() {
                 // and add it to the message.
                 taskSnapshot.metadata!!.reference!!.downloadUrl
                     .addOnSuccessListener { uri ->
-                        val friendlyMessage =
-                            FriendlyMessage(null, getUserName(), getPhotoUrl(), uri.toString())
+                        val message =
+                            Message(null, getUserName(), getPhotoUrl(), uri.toString())
                         db.reference
                             .child(MESSAGES_CHILD)
                             .child(key!!)
-                            .setValue(friendlyMessage)
+                            .setValue(message)
                     }
             }
             .addOnFailureListener(this) { e ->
@@ -272,6 +264,7 @@ fun NavigationGraph(navController: NavHostController, vm: ChatVM) {
             Home(vm = vm, navController = navController)
         }
         composable("chat") {
+            Chat(vm = vm)
         }
         composable("settings") {
             Settings(vm = vm)

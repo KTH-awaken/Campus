@@ -61,6 +61,9 @@ android {
 }
 
 dependencies {
+    //To show profile picture with rememberImagePainter that takes imageUrl
+    implementation("io.coil-kt:coil-compose:1.4.0") // todo Check for the latest version
+
     //Navigation
     implementation("androidx.navigation:navigation-compose:2.4.0")
 

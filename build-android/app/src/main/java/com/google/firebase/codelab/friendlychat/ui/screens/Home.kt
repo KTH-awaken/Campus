@@ -100,6 +100,9 @@ fun Chats(vm: ChatVM,navController: NavController){
             .padding(bottom = 20.dp)
             .size(height = 684.dp, width = 100.dp),
     ){
+        Button(onClick = { navController.navigate("chat") }) {
+            Text(text = "Go to chat")
+        }
         //other stuff lazy column with chats
         Box(
             modifier = Modifier

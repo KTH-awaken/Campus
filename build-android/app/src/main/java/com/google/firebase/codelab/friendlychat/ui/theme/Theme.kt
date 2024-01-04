@@ -23,6 +23,8 @@ private val DarkColorScheme = darkColorScheme(
     primary = Color.White,
     secondary = Color(142,142,147),//light grey
     tertiary = Color(220,240,111),//neon yellow
+    onTertiary = Color(196,196,196),//grey msg bubel
+
     background = Color(0,0,0),
     onBackground = Color(28,29,30)//card
 
@@ -32,13 +34,13 @@ private val LightColorScheme = lightColorScheme(
     primary = Color.Black,
     secondary = Color(142,142,147),//light grey
     tertiary = Color(54,123,247),//blue
+    onTertiary = Color(235,233,233),//grey msg bubel
     background = Color(242,242,247),// off withe bg
     onBackground = Color.White,//card
 
     surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
     onSecondary = Color.White,
-    onTertiary = Color.White,
     onSurface = Color(0xFF1C1B1F),
 
 )

@@ -29,16 +29,16 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.codelab.friendlychat.MainActivity.Companion.ANONYMOUS
 import com.google.firebase.codelab.friendlychat.databinding.ImageMessageBinding
 import com.google.firebase.codelab.friendlychat.databinding.MessageBinding
-import com.google.firebase.codelab.friendlychat.model.FriendlyMessage
+import com.google.firebase.codelab.friendlychat.model.Message
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
 // The FirebaseRecyclerAdapter class and options come from the FirebaseUI library
 // See: https://github.com/firebase/FirebaseUI-Android
 class FriendlyMessageAdapter(
-    private val options: FirebaseRecyclerOptions<FriendlyMessage>,
+    private val options: FirebaseRecyclerOptions<Message>,
     private val currentUserName: String?
-) : FirebaseRecyclerAdapter<FriendlyMessage, ViewHolder>(options) {
+) : FirebaseRecyclerAdapter<Message, ViewHolder>(options) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -53,7 +53,7 @@ class FriendlyMessageAdapter(
         }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int, model: FriendlyMessage) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, model: Message) {
         if (options.snapshots[position].text != null) {
             (holder as MessageViewHolder).bind(model)
         } else {
@@ -66,7 +66,7 @@ class FriendlyMessageAdapter(
     }
 
     inner class MessageViewHolder(private val binding: MessageBinding) : ViewHolder(binding.root) {
-        fun bind(item: FriendlyMessage) {
+        fun bind(item: Message) {
             binding.messageTextView.text = item.text
             setTextColor(item.name, binding.messageTextView)
 
@@ -91,7 +91,7 @@ class FriendlyMessageAdapter(
 
     inner class ImageMessageViewHolder(private val binding: ImageMessageBinding) :
         ViewHolder(binding.root) {
-        fun bind(item: FriendlyMessage) {
+        fun bind(item: Message) {
             loadImageIntoView(binding.messageImageView, item.imageUrl!!, false)
 
             binding.messengerTextView.text = item.name ?: ANONYMOUS

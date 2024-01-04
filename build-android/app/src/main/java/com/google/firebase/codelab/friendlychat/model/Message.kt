@@ -13,24 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.google.firebase.codelab.friendlychat.model
 
-package com.google.firebase.codelab.friendlychat;
-
-
-import androidx.test.filters.LargeTest;
-import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
-import androidx.test.rule.ActivityTestRule;
-
-import org.junit.Rule;
-import org.junit.runner.RunWith;
-
-@RunWith(AndroidJUnit4ClassRunner.class)
-@LargeTest
-public class MainActivityEspressoTest {
-
-    @Rule
-    public ActivityTestRule<MainActivity> mActivityRule =
-            new ActivityTestRule<>(MainActivity.class);
-
-    // Add instrumentation test here
-}
+data class Message(
+    val text: String? = null,
+    val name: String? = null,
+    val photoUrl: String? = null,
+    val imageUrl: String? = null,
+)
