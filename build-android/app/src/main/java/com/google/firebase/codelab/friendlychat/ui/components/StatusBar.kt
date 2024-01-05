@@ -19,7 +19,7 @@ fun StatusBar(vm: ChatVM) {
 
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp)
+            .padding(bottom = 10.dp)
             .size(height = 62.dp, width = 100.dp),
     ){
         //lazy row of rooms

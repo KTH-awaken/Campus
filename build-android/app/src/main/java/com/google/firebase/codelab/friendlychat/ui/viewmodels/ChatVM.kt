@@ -42,8 +42,8 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
         })
     }
 
-    fun sendMessage(text: String, userName: String?, photoUrl: String?) {
-        val message = Message(text, userName, photoUrl, null)
+    fun sendMessage(text: String, userName: String?, photoUrl: String?,timeStamp: String?){
+        val message = Message(text, userName, photoUrl, null, timeStamp)
         messagesRef.push().setValue(message)
     }
 
@@ -58,6 +58,16 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
 
     fun setTextInput(value: String){
         _textInput.value = value
+    }
+
+    fun getAllMembersProfilePhotosFromChat(): List<String> {
+        val allMembersProfilePhotos = mutableListOf<String>()
+        for (message in _messages.value) {
+            if (message.photoUrl != null) {
+                allMembersProfilePhotos.add(message.photoUrl)
+            }
+        }
+        return allMembersProfilePhotos
     }
 
 }

@@ -24,9 +24,9 @@ private val DarkColorScheme = darkColorScheme(
     secondary = Color(142,142,147),//light grey
     tertiary = Color(220,240,111),//neon yellow
     onTertiary = Color(196,196,196),//grey msg bubel
-
     background = Color(0,0,0),
-    onBackground = Color(28,29,30)//card
+    onBackground = Color(28,29,30),//card
+    outline = Color(41,41,41),//super light grey nästan vit devider line color
 
 )
 
@@ -37,11 +37,9 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = Color(235,233,233),//grey msg bubel
     background = Color(242,242,247),// off withe bg
     onBackground = Color.White,//card
+    outline = Color(244,243,243),//super light grey nästan vit devider line color
 
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onSurface = Color(0xFF1C1B1F),
+
 
 )
 

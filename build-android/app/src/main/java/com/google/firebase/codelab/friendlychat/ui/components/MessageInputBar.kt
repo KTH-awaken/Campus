@@ -9,10 +9,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,102 +34,100 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.campus.ui.viewmodels.ChatVM
 import com.google.firebase.codelab.friendlychat.R
 
+
 @Composable
-fun MessageInputBar(vm: ChatVM) {
+fun CustomBasicTextField(vm: ChatVM) {
     var text by remember { mutableStateOf("") }
-//    var text = vm.textInput.collectAsState(initial = "").value
     var isFocused by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+
+    Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(top = 10.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = { /* Handle attachment */ }) {
             Icon(
                 painter = painterResource(id = R.drawable.add_photo_alternate_fill0_wght400_grad0_opsz24),
                 contentDescription = "Attachment",
-                tint = MaterialTheme.colorScheme.tertiary
+                tint = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier.size(30.dp),
             )
         }
 
-        // Input field
-        OutlinedTextField(
+        BasicTextField(
             value = text,
             onValueChange = { text = it },
-            placeholder = { Text("Message Campus Flemingsberg ") },//TODO: Change to Campus name"
-        )
-
-        IconButton(onClick = {
-            if(text.isNotBlank()) {
-                vm.sendMessage(text,vm.auth.currentUser!!.displayName!!, vm.auth.currentUser!!.photoUrl.toString())
-                text = ""
-            }
-        }) {
-            Icon(
-                Icons.Default.Send, contentDescription = "Send",
-                tint = MaterialTheme.colorScheme.tertiary
-            )
-        }
-    }
-}
-
-@Composable
-fun CustomInputField(vm: ChatVM) {
-    var text by remember { mutableStateOf("") }
-    var isFocused by remember { mutableStateOf(false) }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = { /* Handle attachment */ }) {
-            Icon(
-                painter = painterResource(id = R.drawable.add_photo_alternate_fill0_wght400_grad0_opsz24),
-                contentDescription = "Attachment",
-                tint = MaterialTheme.colorScheme.tertiary
-            )
-        }
-
-        Box(
+            singleLine = true,
+            textStyle = TextStyle(
+                color = Color.Black,
+                fontSize = 12.sp // Adjust font size as needed
+            ),
             modifier = Modifier
                 .weight(1f)
-                .height(28.dp)
+                .height(35.dp)
+                .padding(horizontal = 8.dp)
+                .clip(RoundedCornerShape(20.dp))
                 .background(
-                    color = if (isFocused) Color.Transparent else Color.Gray,
+                    color = if (isFocused) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onTertiary,
                     shape = RoundedCornerShape(20.dp)
                 )
                 .border(
                     width = if (isFocused) 2.dp else 0.dp,
-                    color = if (isFocused) Color.Blue else Color.Transparent,
+                    color = if (isFocused) MaterialTheme.colorScheme.tertiary else Color.Transparent,
                     shape = RoundedCornerShape(20.dp)
                 )
-                .clickable { isFocused = true }
-                .padding(8.dp)
-        ) {
-            Text(text = text, color = Color.Black)
-        }
-
-        IconButton(onClick = {
-            if (text.isNotBlank()) {
-                vm.sendMessage(text, vm.auth.currentUser!!.displayName!!, vm.auth.currentUser!!.photoUrl.toString())
-                text = ""
+                .focusRequester(focusRequester)
+                .onFocusChanged { focusState ->
+                    isFocused = focusState.isFocused
+                    if (!isFocused && text.isEmpty()) {
+                        focusRequester.freeFocus()
+                    }
+                }
+                .imePadding(),
+            decorationBox = { innerTextField ->
+                Box(
+                    contentAlignment = Alignment.CenterStart, // Center text horizontally
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                ) {
+                    if (text.isEmpty() && !isFocused) {
+                        Text("Message Campus Flemingsberg", color = MaterialTheme.colorScheme.secondary)
+                    }
+                    innerTextField()
+                }
             }
-        }) {
-            Icon(
-                Icons.Default.Send, contentDescription = "Send",
-                tint = MaterialTheme.colorScheme.tertiary
-            )
+        )
+
+        if (text!=""){
+            IconButton(onClick = {
+                if (text.isNotBlank()) {
+                    val timeStamp: String = System.currentTimeMillis().toString()
+                    vm.sendMessage(text, vm.auth.currentUser!!.displayName!!, vm.auth.currentUser!!.photoUrl.toString(),timeStamp)
+                    text = ""
+                }
+            }) {
+                Icon(
+                    Icons.Default.Send, contentDescription = "Send",
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.size(30.dp),
+                )
+            }
         }
     }
 }

@@ -1,11 +1,17 @@
 package com.google.firebase.codelab.friendlychat.ui.screens
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+//import androidx.compose.foundation.layout.ColumnScopeInstance.weight
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,10 +43,15 @@ import com.example.campus.ui.components.ColorChangingCampusLogo
 import com.example.campus.ui.viewmodels.ChatVM
 import com.google.firebase.codelab.friendlychat.model.Message
 import coil.compose.rememberImagePainter
-import com.google.firebase.codelab.friendlychat.ui.components.CustomInputField
-import com.google.firebase.codelab.friendlychat.ui.components.MessageInputBar
+import com.google.firebase.codelab.friendlychat.ui.components.CustomBasicTextField
 import com.google.firebase.codelab.friendlychat.ui.components.StatusBar
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Chat(vm:ChatVM) {
     Column(
@@ -66,7 +77,7 @@ fun TopBar(vm: ChatVM) {
     )
     Row(
         modifier = Modifier
-            .padding(bottom = 40.dp)
+            .padding(bottom = 10.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ){
@@ -82,6 +93,7 @@ fun TopBar(vm: ChatVM) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChatCard(vm: ChatVM){
     val messages by vm.messages.collectAsState()
@@ -92,7 +104,8 @@ fun ChatCard(vm: ChatVM){
 
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp)
+//            .weight(1f)
+            .padding(bottom = 0.dp)
             .size(height = 684.dp, width = 100.dp),
     ){
         Column {
@@ -100,7 +113,7 @@ fun ChatCard(vm: ChatVM){
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(top = 20.dp, bottom = 20.dp)
+                    .padding()
                 ,
                 state = scrollState
             ) {
@@ -109,12 +122,12 @@ fun ChatCard(vm: ChatVM){
                     MessageBubble(message,vm)
                 }
             }
-//            MessageInputBar(vm)
-            CustomInputField(vm = vm)
+            CustomBasicTextField(vm = vm)
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)//TODO CHECK IF CAN BE REMOVED IF CAUSES PROBLEMS AND CAUSE ITS UGLY
 @Composable
 fun MessageBubble(message: Message,vm: ChatVM) {
     var textColor = Color.Black
@@ -122,17 +135,34 @@ fun MessageBubble(message: Message,vm: ChatVM) {
     if (!darkMode&&vm.isMyMessage(message)){
             textColor = Color.White
     }
+    val timestamp = message.timeStamp?.toLongOrNull() ?: System.currentTimeMillis()
+    val messageTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault())
+    val formattedTime = if (messageTime.toLocalDate().isEqual(LocalDate.now())) {
+        messageTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+    } else {
+        messageTime.format(DateTimeFormatter.ofPattern("d MMM HH:mm"))
+    }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 5.dp),
+            .padding(horizontal = 8.dp, vertical = 3.dp),
         horizontalArrangement = if (vm.isMyMessage(message)) Arrangement.End else Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (!vm.isMyMessage(message)){
             ProfilePictureBubble(message.photoUrl ?: "", 37.dp)
             Spacer(modifier = Modifier.size(2.dp))
+        }else{
+            Text(
+                modifier = Modifier
+                    .padding(end = 4.dp, top = 15.dp),
+                text=formattedTime,
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = 10.sp,
+            )
+            //TODO ADD TEXT OF CURRENT ROM IN BOLD
+
         }
         Card(
             colors = if (vm.isMyMessage(message)) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary) else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiary),
@@ -154,6 +184,15 @@ fun MessageBubble(message: Message,vm: ChatVM) {
         if (vm.isMyMessage(message)){
             Spacer(modifier = Modifier.size(2.dp))
             ProfilePictureBubble(message.photoUrl ?: "", 37.dp)
+        }else{
+            Text(
+                modifier = Modifier
+                    .padding(start = 4.dp, top = 15.dp),
+                text=formattedTime,
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = 10.sp,
+            )
+            //TODO ADD TEXT OF CURRENT ROM IN BOLD
         }
 
     }
