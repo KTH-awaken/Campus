@@ -2,11 +2,13 @@ package com.google.firebase.codelab.friendlychat
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -277,6 +279,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationGraph(navController: NavHostController, vm: ChatVM) {
     NavHost(navController, startDestination = "home") {
@@ -284,7 +287,7 @@ fun NavigationGraph(navController: NavHostController, vm: ChatVM) {
             Home(vm = vm, navController = navController)
         }
         composable("chat") {
-            Chat(vm = vm)
+            Chat(vm = vm, navController = navController)
         }
         composable("settings") {
             Settings(vm = vm)

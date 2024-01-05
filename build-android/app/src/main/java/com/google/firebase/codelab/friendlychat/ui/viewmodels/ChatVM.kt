@@ -69,6 +69,14 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
         }
         return allMembersProfilePhotos
     }
-
+    fun getAllMembersUniqueUrlsProfilePhotosFromChat(): List<String> {
+        val allMembersProfilePhotos = mutableListOf<String>()
+        for (message in _messages.value) {
+            if (message.photoUrl != null) {
+                allMembersProfilePhotos.add(message.photoUrl)
+            }
+        }
+        return allMembersProfilePhotos.distinct()
+    }
 }
 

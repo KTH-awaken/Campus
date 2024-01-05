@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,9 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -62,19 +58,19 @@ import java.time.format.DateTimeFormatter
 fun Home(vm: ChatVM,navController: NavController) {
     Column(
         modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp)
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        TopButtonBar(vm = vm)
+        TopButtonBar(vm = vm,navController = navController)
         Chats(vm = vm,navController = navController)
 
 
     }
 }
 @Composable
-fun TopButtonBar(vm: ChatVM) {
+fun TopButtonBar(vm: ChatVM, navController: NavController) {
     val customCardColors = CardDefaults.cardColors(
         containerColor = MaterialTheme.colorScheme.onBackground,
     )
@@ -85,7 +81,7 @@ fun TopButtonBar(vm: ChatVM) {
         horizontalArrangement = Arrangement.SpaceBetween,
     ){
         Box(modifier = Modifier.size(140.dp,44.dp)){
-           ColorChangingCampusLogo(vm = vm)
+           ColorChangingCampusLogo(vm = vm,navController = navController)
         }
         Button(
             onClick = { /*TODO add campus*/ },
@@ -119,8 +115,7 @@ fun Chats(vm: ChatVM,navController: NavController){
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp,),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp)
-            .size(height = 684.dp, width = 100.dp),
+            .size(height = 900.dp, width = 100.dp),
     ){
 
         ChatPreview(vm =vm ,navController = navController)

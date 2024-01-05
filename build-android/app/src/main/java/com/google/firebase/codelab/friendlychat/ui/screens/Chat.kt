@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.campus.ui.components.ColorChangingCampusLogo
 import com.example.campus.ui.viewmodels.ChatVM
 import com.google.firebase.codelab.friendlychat.model.Message
@@ -53,15 +54,15 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Chat(vm:ChatVM) {
+fun Chat(vm:ChatVM,navController: NavController) {
     Column(
         modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp)
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        TopBar(vm = vm)
+        TopBar(vm = vm,navController= navController)
         StatusBar(vm = vm)
         ChatCard(vm = vm)
 
@@ -71,7 +72,7 @@ fun Chat(vm:ChatVM) {
 
 
 @Composable
-fun TopBar(vm: ChatVM) {
+fun TopBar(vm: ChatVM, navController: NavController) {
     val customCardColors = CardDefaults.cardColors(
         containerColor = MaterialTheme.colorScheme.onBackground,
     )
@@ -82,7 +83,7 @@ fun TopBar(vm: ChatVM) {
         horizontalArrangement = Arrangement.SpaceBetween,
     ){
         Box(modifier = Modifier.size(140.dp,44.dp)){
-            ColorChangingCampusLogo(vm = vm)
+            ColorChangingCampusLogo(vm = vm,navController = navController)
         }
         Text(
             modifier = Modifier.padding(top = 6.dp),
@@ -105,7 +106,6 @@ fun ChatCard(vm: ChatVM){
         modifier = Modifier
             .fillMaxWidth()
 //            .weight(1f)
-            .padding(bottom = 0.dp)
             .size(height = 684.dp, width = 100.dp),
     ){
         Column {
@@ -200,7 +200,6 @@ fun MessageBubble(message: Message,vm: ChatVM) {
 
 @Composable
 fun ProfilePictureBubble(photoUrl: String, imageSize: Dp) {
-    Log.d("Marcus", "ProfilePictureBubble: $photoUrl")
     Card(
         shape = CircleShape,
         modifier = Modifier

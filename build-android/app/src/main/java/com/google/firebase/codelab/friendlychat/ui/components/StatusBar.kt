@@ -23,6 +23,7 @@ fun StatusBar(vm: ChatVM) {
             .size(height = 62.dp, width = 100.dp),
     ){
         //lazy row of rooms
+        Room(vm = vm)
     }
 
 }

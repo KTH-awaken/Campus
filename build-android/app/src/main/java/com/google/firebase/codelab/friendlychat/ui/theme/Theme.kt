@@ -39,8 +39,6 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color.White,//card
     outline = Color(244,243,243),//super light grey nästan vit devider line color
 
-
-
 )
 
 @Composable
