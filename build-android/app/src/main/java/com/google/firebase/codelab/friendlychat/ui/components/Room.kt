@@ -30,7 +30,7 @@ fun Room(vm:ChatVM) {
         modifier = Modifier
             .padding(6.dp)
             .clip(RoundedCornerShape(6.dp))
-            .border(1.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(6.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(6.dp))
             .padding(6.dp)
             .background(MaterialTheme.colorScheme.onBackground),
     ) {
@@ -44,31 +44,18 @@ fun Room(vm:ChatVM) {
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.background( MaterialTheme.colorScheme.onBackground),
         ) {
-            profilePictures.forEach { imageUrl ->
-                Card(
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .size(37.dp)
-                        .padding(start = 4.dp, end = 4.dp,top= 4.dp,bottom = 4.dp)
-                ) {
-                    Image(
-                        painter = rememberImagePainter(imageUrl),
-                        contentDescription = "Profile picture",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
-                            .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
-                    )
-                }
+            profilePictures.forEach { photoUrl ->
+                ProfilePictureBubble(photoUrl = photoUrl, imageSize = 37.dp)
+
             }
-            Text(
-                text = "Rudan",
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .background(color = MaterialTheme.colorScheme.onBackground),
-                fontSize = 3.sp,
-                color = MaterialTheme.colorScheme.secondary,
-            )
+//            Text(
+//                text = "Rudan",
+//                modifier = Modifier
+//                    .padding(start = 8.dp)
+//                    .background(color = MaterialTheme.colorScheme.onBackground),
+//                fontSize = 3.sp,
+//                color = MaterialTheme.colorScheme.secondary,
+//            )
 
 
         }

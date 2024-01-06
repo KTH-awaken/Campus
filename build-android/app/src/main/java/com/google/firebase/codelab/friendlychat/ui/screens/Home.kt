@@ -47,6 +47,7 @@ import coil.compose.rememberImagePainter
 import com.example.campus.ui.components.ColorChangingCampusLogo
 import com.example.campus.ui.viewmodels.ChatVM
 import com.google.firebase.codelab.friendlychat.R
+import com.google.firebase.codelab.friendlychat.ui.components.ProfilePictureBubble
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -203,14 +204,17 @@ fun ProfilePictureStack(profileUrls: List<String>) {
 
     BoxWithConstraints() {
         Box() {
-            Image(
-                painter = rememberImagePainter(secondUniqueUrl),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(37.dp)
-                    .clip(CircleShape)
-                    .border(2.dp, MaterialTheme.colorScheme.onTertiary, CircleShape)
-            )
+            if (firstUniqueUrl != null) {
+                ProfilePictureBubble(photoUrl = firstUniqueUrl, imageSize =37.dp )
+            }
+//            Image(
+//                painter = rememberImagePainter(secondUniqueUrl),
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .size(37.dp)
+//                    .clip(CircleShape)
+//                    .border(2.dp, MaterialTheme.colorScheme.onTertiary, CircleShape)
+//            )
         }
         Column() {
             Spacer(modifier = Modifier
@@ -222,14 +226,17 @@ fun ProfilePictureStack(profileUrls: List<String>) {
                     modifier = Modifier
                         .zIndex(2f)
                 ) {
-                    Image(
-                        painter = rememberImagePainter(firstUniqueUrl),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(37.dp)
-                            .clip(CircleShape)
-                            .border(2.dp, MaterialTheme.colorScheme.onTertiary, CircleShape)
-                    )
+                    if (secondUniqueUrl != null) {
+                        ProfilePictureBubble(photoUrl = secondUniqueUrl, imageSize =37.dp )
+                    }
+//                    Image(
+//                        painter = rememberImagePainter(firstUniqueUrl),
+//                        contentDescription = null,
+//                        modifier = Modifier
+//                            .size(37.dp)
+//                            .clip(CircleShape)
+//                            .border(2.dp, MaterialTheme.colorScheme.onTertiary, CircleShape)
+//                    )
                 }
             }
         }

@@ -35,6 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -45,6 +48,7 @@ import com.example.campus.ui.viewmodels.ChatVM
 import com.google.firebase.codelab.friendlychat.model.Message
 import coil.compose.rememberImagePainter
 import com.google.firebase.codelab.friendlychat.ui.components.CustomBasicTextField
+import com.google.firebase.codelab.friendlychat.ui.components.ProfilePictureBubble
 import com.google.firebase.codelab.friendlychat.ui.components.StatusBar
 import java.time.Instant
 import java.time.LocalDate
@@ -140,79 +144,98 @@ fun MessageBubble(message: Message,vm: ChatVM) {
     val formattedTime = if (messageTime.toLocalDate().isEqual(LocalDate.now())) {
         messageTime.format(DateTimeFormatter.ofPattern("HH:mm"))
     } else {
-        messageTime.format(DateTimeFormatter.ofPattern("d MMM HH:mm"))
+        messageTime.format(DateTimeFormatter.ofPattern("d MMM HH:mm")).replace(".", "")
     }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 3.dp),
-        horizontalArrangement = if (vm.isMyMessage(message)) Arrangement.End else Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (!vm.isMyMessage(message)){
-            ProfilePictureBubble(message.photoUrl ?: "", 37.dp)
-            Spacer(modifier = Modifier.size(2.dp))
-        }else{
-            Text(
-                modifier = Modifier
-                    .padding(end = 4.dp, top = 15.dp),
-                text=formattedTime,
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 10.sp,
-            )
-            //TODO ADD TEXT OF CURRENT ROM IN BOLD
-
-        }
-        Card(
-            colors = if (vm.isMyMessage(message)) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary) else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiary),
-            shape = RoundedCornerShape(20.dp),
-
-        ) {
-            message.text?.let {
-                Text(
-                    text = it,
-                    color = textColor,
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp, top = 3.dp, bottom = 7.dp)
-                        ,
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp,
-                )
-            }
-        }
-        if (vm.isMyMessage(message)){
-            Spacer(modifier = Modifier.size(2.dp))
-            ProfilePictureBubble(message.photoUrl ?: "", 37.dp)
-        }else{
-            Text(
-                modifier = Modifier
-                    .padding(start = 4.dp, top = 15.dp),
-                text=formattedTime,
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 10.sp,
-            )
-            //TODO ADD TEXT OF CURRENT ROM IN BOLD
-        }
-
-    }
-}
-
-@Composable
-fun ProfilePictureBubble(photoUrl: String, imageSize: Dp) {
-    Card(
-        shape = CircleShape,
-        modifier = Modifier
-            .size(imageSize)
-            .padding(4.dp),
-    ) {
-        Image(
-            painter = rememberImagePainter(data = photoUrl),
-            contentDescription = "Profile Picture",
+    val density = LocalDensity.current
+    Column {
+        Row (
             modifier = Modifier
-                .fillMaxSize()
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
+                .fillMaxWidth(),
+           horizontalArrangement = if (vm.isMyMessage(message)) Arrangement.End else Arrangement.Start,
+        ){
+            Text(
+                text = vm.getFirstName(message),
+                modifier = Modifier
+                    .padding(horizontal = 14.dp, vertical = 0.dp)
+                ,
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = 10.sp,
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 2.dp),
+            horizontalArrangement = if (vm.isMyMessage(message)) Arrangement.End else Arrangement.Start,
+            verticalAlignment = Alignment.Top
+        ) {
+
+            if (!vm.isMyMessage(message)){
+                ProfilePictureBubble(message.photoUrl ?: "", 37.dp)
+                Spacer(modifier = Modifier.size(2.dp))
+            }else{
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Bottom),
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(end = 4.dp, bottom = 10.dp),
+                        text=formattedTime,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 10.sp,
+                    )
+                    //TODO ADD TEXT OF CURRENT ROM IN BOLD
+                }
+            }
+                var shape = RoundedCornerShape(20.dp)
+            Card(
+                    colors = if (vm.isMyMessage(message)) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary) else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiary),
+                modifier = Modifier.widthIn(max = 250.dp)
+                    .onGloballyPositioned { layoutCoordinates ->
+                         shape = if (layoutCoordinates.size.width >= with(density) { 250.dp.toPx() }) {
+                            RoundedCornerShape(0.dp)
+                        } else {
+                            RoundedCornerShape(0.dp)
+                        }
+                    },
+                        shape = shape,
+            ) {
+                message.text?.let {
+                    Text(
+                        text = it,
+                        color = textColor,
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp, top = 3.dp, bottom = 7.dp)
+                            ,
+                        textAlign = TextAlign.Start,
+                        fontSize = 14.sp,
+                    )
+                }
+            }
+            if (vm.isMyMessage(message)){
+                Spacer(modifier = Modifier.size(2.dp))
+                ProfilePictureBubble(message.photoUrl ?: "", 37.dp)
+            }else{
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Bottom), // Align the time text to the bottom start
+                ) {
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp, bottom = 10.dp),
+                        text = formattedTime,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 10.sp,
+                        textAlign = TextAlign.Start,
+                    )
+                //TODO ADD TEXT OF CURRENT ROM IN BOLD
+                }
+
+            }
+
+        }
     }
 }
+
+

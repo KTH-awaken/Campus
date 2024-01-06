@@ -43,7 +43,11 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
     }
 
     fun sendMessage(text: String, userName: String?, photoUrl: String?,timeStamp: String?){
-        val message = Message(text, userName, photoUrl, null, timeStamp)
+        var photoUrlToSave = photoUrl
+        if (photoUrl==null||photoUrl==""){
+            photoUrlToSave=userName
+        }
+        val message = Message(text, userName, photoUrlToSave, null, timeStamp)
         messagesRef.push().setValue(message)
     }
 
@@ -77,6 +81,9 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
             }
         }
         return allMembersProfilePhotos.distinct()
+    }
+    fun getFirstName(Message: Message): String {
+        return Message.name?.split(" ")?.get(0) ?: "Unknown"
     }
 }
 
