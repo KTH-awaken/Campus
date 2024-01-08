@@ -5,9 +5,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +19,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,11 +31,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.campus.ui.components.ColorChangingCampusLogo
 import com.example.campus.ui.viewmodels.ChatVM
 import com.google.firebase.codelab.friendlychat.R
 
 @Composable
-fun Settings(vm: ChatVM) {
+fun Settings(vm: ChatVM, navController: NavController) {
         Column(
             modifier = Modifier
                 .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
@@ -40,18 +46,8 @@ fun Settings(vm: ChatVM) {
             ,
             horizontalAlignment = Alignment.CenterHorizontally,
         ){
-            Row(
-                modifier = Modifier
-                    .padding(bottom = 40.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
-            ){
-                Text(
-                    fontSize = 20.sp,
-                    text ="SETTINGS",
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+            TopBar(vm = vm, navController = navController)
+            Spacer(modifier = Modifier.size(20.dp))
             ThemeSelect(vm =  vm)
             UserSettings(vm = vm)
         }
@@ -170,6 +166,52 @@ fun UserSettings(vm : ChatVM) {
             .size(height = 200.dp, width = 100.dp)
         ,
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+                .padding(start = 10.dp)
+            ,
+            verticalAlignment = Alignment.CenterVertically,
+        ){
+            Button(
+                onClick = { vm.signOut() },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
+                contentPadding = PaddingValues(0.dp),
 
+            ) {
+                Row (verticalAlignment = Alignment.CenterVertically){
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_logout_24),
+                        contentDescription = "Sign out",
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                    Text(text ="    Sign out", color = MaterialTheme.colorScheme.secondary, fontSize = 14.sp, modifier = Modifier.padding(bottom = 2.dp))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TopBar(vm: ChatVM, navController: NavController) {
+    val customCardColors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.onBackground,
+    )
+    Row(
+        modifier = Modifier
+            .padding(bottom = 10.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ){
+        Box(modifier = Modifier.size(140.dp,44.dp)){
+            ColorChangingCampusLogo(vm = vm,navController = navController)
+        }
+        Text(
+            modifier = Modifier.padding(top = 6.dp),
+            fontSize = 20.sp,
+            text ="SETTINGS",
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }

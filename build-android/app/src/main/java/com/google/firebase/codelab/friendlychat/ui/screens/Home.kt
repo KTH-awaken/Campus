@@ -140,6 +140,8 @@ fun Chats(vm: ChatVM,navController: NavController){
     }
 }
 
+
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChatPreview(vm: ChatVM, navController: NavController) {
@@ -207,14 +209,6 @@ fun ProfilePictureStack(profileUrls: List<String>) {
             if (firstUniqueUrl != null) {
                 ProfilePictureBubble(photoUrl = firstUniqueUrl, imageSize =37.dp )
             }
-//            Image(
-//                painter = rememberImagePainter(secondUniqueUrl),
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .size(37.dp)
-//                    .clip(CircleShape)
-//                    .border(2.dp, MaterialTheme.colorScheme.onTertiary, CircleShape)
-//            )
         }
         Column() {
             Spacer(modifier = Modifier
@@ -229,14 +223,7 @@ fun ProfilePictureStack(profileUrls: List<String>) {
                     if (secondUniqueUrl != null) {
                         ProfilePictureBubble(photoUrl = secondUniqueUrl, imageSize =37.dp )
                     }
-//                    Image(
-//                        painter = rememberImagePainter(firstUniqueUrl),
-//                        contentDescription = null,
-//                        modifier = Modifier
-//                            .size(37.dp)
-//                            .clip(CircleShape)
-//                            .border(2.dp, MaterialTheme.colorScheme.onTertiary, CircleShape)
-//                    )
+
                 }
             }
         }

@@ -43,13 +43,10 @@ import com.google.firebase.codelab.friendlychat.ui.viewmodels.LocationVM
 import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
-//    private lateinit var binding: ActivityMainBinding
-//    private lateinit var manager: LinearLayoutManager
 
     // Firebase instance variables
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseDatabase
-//    private lateinit var adapter: FriendlyMessageAdapter
 
     private lateinit var gpsManager: GpsManager
 
@@ -57,11 +54,13 @@ class MainActivity : AppCompatActivity() {
         uri?.let { onImageSelected(it) }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val locationVM = LocationVM(application,this)
         locationVM.updateLocation()
         setContent { //TODO FROM CAMPUS
+
             val navController = rememberNavController()
             val vm: ChatVM = viewModel()
             val darkMode by vm.darkMode.collectAsState()
@@ -74,10 +73,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-//        // This codelab uses View Binding
-//        // See: https://developer.android.com/topic/libraries/view-binding
-//        binding = ActivityMainBinding.inflate(layoutInflater)
-//        setContentView(binding.root)
+
 
 
 
@@ -245,7 +241,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun signOut() {
+     fun signOut() {
         AuthUI.getInstance().signOut(this)
         startActivity(Intent(this, SignInActivity::class.java))
         finish()
@@ -282,7 +278,7 @@ fun NavigationGraph(navController: NavHostController, vm: ChatVM) {
             Chat(vm = vm, navController = navController)
         }
         composable("settings") {
-            Settings(vm = vm)
+            Settings(vm = vm,navController = navController)
         }
     }
 }
