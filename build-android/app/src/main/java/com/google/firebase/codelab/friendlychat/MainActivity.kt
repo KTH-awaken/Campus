@@ -40,7 +40,6 @@ import com.google.firebase.codelab.friendlychat.ui.screens.Chat
 
 import com.google.firebase.codelab.friendlychat.data.sensors.GpsManager
 import com.google.firebase.codelab.friendlychat.ui.viewmodels.LocationVM
-import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavigationGraph(navController = navController, vm = vm )
+                    NavigationGraph(navController = navController, vm = vm, locationVM = locationVM )
                 }
             }
         }
@@ -103,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavigationGraph(navController = navController, vm = vm )
+                    NavigationGraph(navController = navController, vm = vm, locationVM = locationVM)
                 }
             }
         }
@@ -269,16 +268,16 @@ class MainActivity : AppCompatActivity() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavigationGraph(navController: NavHostController, vm: ChatVM) {
+fun NavigationGraph(navController: NavHostController, vm: ChatVM, locationVM: LocationVM) {
     NavHost(navController, startDestination = "home") {
         composable("home") {
-            Home(vm = vm, navController = navController)
+            Home(vm = vm, navController = navController, locationVM = locationVM)
         }
         composable("chat") {
-            Chat(vm = vm, navController = navController)
+            Chat(vm = vm, navController = navController, locationVM = locationVM)
         }
         composable("settings") {
-            Settings(vm = vm,navController = navController)
+            Settings(vm = vm,navController = navController, locationVM = locationVM)
         }
     }
 }

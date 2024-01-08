@@ -1,10 +1,8 @@
 package com.example.campus.ui.viewmodels
 
-import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.codelab.friendlychat.SignInActivity
 import com.google.firebase.codelab.friendlychat.model.Message
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,6 +21,7 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
 
     private val _textInput = MutableStateFlow("")
     val textInput: StateFlow<String> get() = _textInput
+
 
 
     //init
@@ -44,13 +43,22 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
         })
     }
 
-    fun sendMessage(text: String, userName: String?, photoUrl: String?,timeStamp: String?){
+    fun sendMessage(
+        text: String,
+        userName: String?,
+        photoUrl: String?,
+        timeStamp: String?,
+        currentRoom: String?
+    ){
         var photoUrlToSave = photoUrl
         if (photoUrl==null||photoUrl==""){
             photoUrlToSave=userName
         }
         //todo add my location in message
-        val message = Message(text, userName, photoUrlToSave, null, timeStamp)
+        val message = Message(text, userName, photoUrlToSave, null, timeStamp, currentRoom)
+        if (currentRoom != null) {
+            Log.d("MarcusTAGRoom",currentRoom)
+        }
         messagesRef.push().setValue(message)
     }
 

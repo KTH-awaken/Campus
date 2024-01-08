@@ -26,6 +26,9 @@ class Room(public val room:String,public val address:String,public val lat:Doubl
         return false
     }
 
+    override fun toString(): String {
+        return "Room(room='$room', address='$address', lat=$lat, lon=$lon, floor='$floor')"
+    }
 }
 
 data class Rect(val lat_0:Double,val lon_0:Double,val lat_1:Double,val lon_1:Double){

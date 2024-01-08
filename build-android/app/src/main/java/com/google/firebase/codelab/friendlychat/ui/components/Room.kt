@@ -48,14 +48,14 @@ fun Room(vm:ChatVM) {
                 ProfilePictureBubble(photoUrl = photoUrl, imageSize = 37.dp)
 
             }
-//            Text(
-//                text = "Rudan",
-//                modifier = Modifier
-//                    .padding(start = 8.dp)
-//                    .background(color = MaterialTheme.colorScheme.onBackground),
-//                fontSize = 3.sp,
-//                color = MaterialTheme.colorScheme.secondary,
-//            )
+            Text(
+                text = "Rudan",
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .background(color = MaterialTheme.colorScheme.onBackground),
+                fontSize = 3.sp,
+                color = MaterialTheme.colorScheme.secondary,
+            )
 
 
         }

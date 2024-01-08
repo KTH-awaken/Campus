@@ -1,9 +1,7 @@
 package com.google.firebase.codelab.friendlychat.ui.screens
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,24 +29,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.campus.ui.components.ColorChangingCampusLogo
 import com.example.campus.ui.viewmodels.ChatVM
 import com.google.firebase.codelab.friendlychat.model.Message
-import coil.compose.rememberImagePainter
 import com.google.firebase.codelab.friendlychat.ui.components.CustomBasicTextField
 import com.google.firebase.codelab.friendlychat.ui.components.ProfilePictureBubble
 import com.google.firebase.codelab.friendlychat.ui.components.StatusBar
+import com.google.firebase.codelab.friendlychat.ui.viewmodels.LocationVM
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -58,7 +51,7 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Chat(vm:ChatVM,navController: NavController) {
+fun Chat(vm: ChatVM, navController: NavController, locationVM: LocationVM) {
     Column(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp)
@@ -68,9 +61,7 @@ fun Chat(vm:ChatVM,navController: NavController) {
     ) {
         TopBar(vm = vm,navController= navController)
         StatusBar(vm = vm)
-        ChatCard(vm = vm)
-
-
+        ChatCard(vm = vm,locationVM = locationVM)
     }
 }
 
@@ -100,7 +91,7 @@ fun TopBar(vm: ChatVM, navController: NavController) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ChatCard(vm: ChatVM){
+fun ChatCard(vm: ChatVM, locationVM: LocationVM){
     val messages by vm.messages.collectAsState()
     val scrollState = rememberLazyListState()
     ElevatedCard(
@@ -126,7 +117,7 @@ fun ChatCard(vm: ChatVM){
                     MessageBubble(message,vm)
                 }
             }
-            CustomBasicTextField(vm = vm)
+            CustomBasicTextField(vm = vm, locationVM = locationVM)
         }
     }
 }
@@ -192,6 +183,7 @@ fun MessageBubble(message: Message,vm: ChatVM) {
             Card(
                     colors = if (vm.isMyMessage(message)) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary) else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiary),
                 modifier = Modifier.widthIn(max = 250.dp)
+                    .padding(top = 3.dp)
                     .onGloballyPositioned { layoutCoordinates ->
                          shape = if (layoutCoordinates.size.width >= with(density) { 250.dp.toPx() }) {
                             RoundedCornerShape(0.dp)
