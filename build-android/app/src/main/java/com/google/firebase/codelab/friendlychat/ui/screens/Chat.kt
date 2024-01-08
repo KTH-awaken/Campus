@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +49,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -165,31 +167,48 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                 ProfilePictureBubble(message.photoUrl ?: "", 37.dp)
                 Spacer(modifier = Modifier.size(2.dp))
             }else{
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.Bottom),
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(end = 4.dp, bottom = 10.dp),
-                        text=formattedTime,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 10.sp,
-                    )
-                    //TODO ADD TEXT OF CURRENT ROM IN BOLD
+
+                Column (
+                    verticalArrangement = Arrangement.Bottom){
+                    Row(
+                        modifier = Modifier.width(60.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            text="Makerspace",//TODO REPLACE WITH ROOM NAME
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Start,
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.width(60.dp),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(end = 4.dp, bottom = 10.dp),
+                            text=formattedTime,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = 10.sp,
+                        )
+                    }
                 }
             }
                 var shape = RoundedCornerShape(20.dp)
             Card(
                     colors = if (vm.isMyMessage(message)) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary) else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiary),
-                modifier = Modifier.widthIn(max = 250.dp)
+                modifier = Modifier
+                    .widthIn(max = 250.dp)
                     .padding(top = 3.dp)
                     .onGloballyPositioned { layoutCoordinates ->
-                         shape = if (layoutCoordinates.size.width >= with(density) { 250.dp.toPx() }) {
-                            RoundedCornerShape(0.dp)
-                        } else {
-                            RoundedCornerShape(0.dp)
-                        }
+                        shape =
+                            if (layoutCoordinates.size.width >= with(density) { 250.dp.toPx() }) {
+                                RoundedCornerShape(0.dp)
+                            } else {
+                                RoundedCornerShape(0.dp)
+                            }
                     },
                         shape = shape,
             ) {
@@ -214,14 +233,34 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                         .fillMaxWidth()
                         .align(Alignment.Bottom), // Align the time text to the bottom start
                 ) {
-                    Text(
-                        modifier = Modifier.padding(start = 4.dp, bottom = 10.dp),
-                        text = formattedTime,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 10.sp,
-                        textAlign = TextAlign.Start,
-                    )
-                //TODO ADD TEXT OF CURRENT ROM IN BOLD
+                    Column (
+                        verticalArrangement = Arrangement.Bottom
+                    ){
+                        Row(
+                            modifier = Modifier.width(60.dp),
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Text(
+                                text="Makerspace",//TODO REPLACE WITH ROOM NAME
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Start,
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.width(60.dp),
+                            horizontalArrangement = Arrangement.Start,
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(end = 4.dp, bottom = 10.dp),
+                                text=formattedTime,
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = 10.sp,
+                            )
+                        }
+                    }
                 }
 
             }
