@@ -1,18 +1,9 @@
 package com.google.firebase.codelab.friendlychat.model
 
-data class Northeast(
-    val lat: Double,
-    val lng: Double
-)
-
-data class Southwest(
-    val lat: Double,
-    val lng: Double
-)
-
-data class Bounds(
-    val northeast: Northeast,
-    val southwest: Southwest
+data class AddressComponent(
+    val longName: String,
+    val shortName: String,
+    val types: List<String>
 )
 
 data class Location(
@@ -21,21 +12,19 @@ data class Location(
 )
 
 data class Viewport(
-    val northeast: Northeast,
-    val southwest: Southwest
+    val northeast: Location,
+    val southwest: Location
 )
 
 data class Geometry(
-    val bounds: Bounds,
     val location: Location,
-    val location_type: String,
+    val locationType: String,
     val viewport: Viewport
 )
 
-data class AddressComponent(
-    val longName: String,
-    val shortName: String,
-    val types: List<String>
+data class PlusCode(
+    val compoundCode: String,
+    val globalCode: String
 )
 
 data class Result(
@@ -43,6 +32,7 @@ data class Result(
     val formatted_address: String,
     val geometry: Geometry,
     val placeId: String,
+    val plusCode: PlusCode,
     val types: List<String>
 )
 

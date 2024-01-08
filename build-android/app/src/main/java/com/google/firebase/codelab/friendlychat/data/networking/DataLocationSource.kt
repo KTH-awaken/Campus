@@ -9,7 +9,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import com.google.gson.Gson
 
-object LocationDataSource{
+object DataLocationSource{
     private fun getBaseURL(lat:Double,lon:Double):String{
         return "https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyAS4XVRTd0IKpGohVOt8gozfl2iIcBXH0k"
     }

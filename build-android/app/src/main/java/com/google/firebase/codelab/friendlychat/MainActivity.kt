@@ -38,8 +38,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.firebase.codelab.friendlychat.ui.screens.Chat
 
-import com.google.firebase.codelab.friendlychat.data.networking.LocationDataSource
 import com.google.firebase.codelab.friendlychat.data.sensors.GpsManager
+import com.google.firebase.codelab.friendlychat.ui.viewmodels.LocationVM
 import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
@@ -59,16 +59,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        gpsManager = GpsManager(this) { location ->
-            Log.d("MainActivity","Location = ${location.toString() ?: "Loading"}")
-            runBlocking {
-                val geoLocationResult = LocationDataSource.getLocation(location.latitude,location.longitude)
-                geoLocationResult.let{
-                    val address = it?.results?.first()?.formatted_address
-                    Log.d("MainActivity","Geolocation = ${address?:"Address is null"}")
-                }
-            }
-        }
+        val locationVM = LocationVM(application,this)
+        locationVM.updateLocation()
         setContent { //TODO FROM CAMPUS
             val navController = rememberNavController()
             val vm: ChatVM = viewModel()
