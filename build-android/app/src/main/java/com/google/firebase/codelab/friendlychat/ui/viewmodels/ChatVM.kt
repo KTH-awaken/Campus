@@ -1,8 +1,10 @@
 package com.example.campus.ui.viewmodels
 
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.codelab.friendlychat.SignInActivity
 import com.google.firebase.codelab.friendlychat.model.Message
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -47,6 +49,7 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
         if (photoUrl==null||photoUrl==""){
             photoUrlToSave=userName
         }
+        //todo add my location in message
         val message = Message(text, userName, photoUrlToSave, null, timeStamp)
         messagesRef.push().setValue(message)
     }
@@ -85,5 +88,10 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
     fun getFirstName(Message: Message): String {
         return Message.name?.split(" ")?.get(0) ?: "Unknown"
     }
+
+    fun signOut(){
+        auth.signOut()
+    }
+
 }
 

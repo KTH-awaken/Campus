@@ -21,4 +21,5 @@ data class Message(
     val photoUrl: String? = null,
     val imageUrl: String? = null,
     val timeStamp: String? = null,
+    val room: String? = null,
 )
