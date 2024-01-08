@@ -73,6 +73,12 @@ class LocationVM(application: Application, private val activity: ComponentActivi
         return "No room"
     }
 
+    fun getMyCurrentRoomName(): String{
+        val l = _geoLocation.value
+
+        return "no room found"
+    }
+
     private val _geoLocation = MutableStateFlow<GeocodeResponse?>(null)
     val geoLocation: StateFlow<GeocodeResponse?>
         get() = _geoLocation
