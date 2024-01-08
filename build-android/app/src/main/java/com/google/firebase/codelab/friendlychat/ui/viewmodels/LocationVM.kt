@@ -59,6 +59,13 @@ class LocationVM(application: Application, private val activity: ComponentActivi
 
     fun getMyCurrentRoom(): String{
         //TODO IMPLEMENT FOR REAL
+        val currentRoom = getCurrentRoom()
+        if(currentRoom != null)
+            return currentRoom.room.toString()
+        return "No room"
+    }
+
+    private fun getCurrentRoom():Room?{
         val l = _geoLocation.value
         if(l != null){
             val address = l?.results?.first()?.formatted_address
@@ -68,16 +75,38 @@ class LocationVM(application: Application, private val activity: ComponentActivi
             val room = Room("Room",address?:"null",lat?:0.0,lng?:0.0,"First")
             _rooms.value += room
             Log.d("DataVM","Added room ${room.toString()}")
-             return room.toString()
-        }
-        return "No room"
+            return room
+        }else
+            return null
     }
 
     fun getMyCurrentRoomName(): String{
-        val l = _geoLocation.value
+        val myRoom = getCurrentRoom()
+        if(myRoom==null)
+            return "My room is null"
+        val latitude = myRoom.lat
+        val longitude = myRoom.lon
 
+        val makerSpace = Room("Makerspace","Blickagången",59.22126919999999,17.9377919,"7")
+        val willys = Room("Willys","Röntgenvägen 7, 141 52 Huddinge", 59.222811,17.938936,"0")
+        val h = Room("H","Röntgenvägen 7, 141 52 Huddinge", 59.22159,17.93675,"0")
+
+        if( makerSpace.isInsideRoom(latitude,longitude) ){
+            Log.d("LocationVM", makerSpace.room)
+            return makerSpace.room
+        }
+        else if(willys.isInsideRoom(latitude,longitude)){
+            Log.d("LocationVM", willys.room)
+            return willys.room
+        }
+        else if(h.isInsideRoom(latitude,longitude)){
+            Log.d("LocationVM", h.room)
+            return h.room
+        }
+        Log.d("LocationVM","No room found")
         return "no room found"
     }
+
 
     private val _geoLocation = MutableStateFlow<GeocodeResponse?>(null)
     val geoLocation: StateFlow<GeocodeResponse?>

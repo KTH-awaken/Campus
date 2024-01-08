@@ -1,5 +1,7 @@
 package com.google.firebase.codelab.friendlychat.model
 
+import android.util.Log
+import kotlin.math.PI
 import kotlin.math.cos
 
 /*
@@ -17,13 +19,16 @@ data class Room(val room:String,val address:String,val lat:Double,val lon:Double
 
  */
 class Room(public val room:String,public val address:String,public val lat:Double,public val lon:Double,public val floor:String){
-    private val rect = Rect
-    init{
-        rect.calculateRect(lat,lon)
-    }
+    private val rect: Rect = Rect.calculateRect(lat,lon)
 
     fun isInsideRoom(lat:Double,lon:Double):Boolean{
-        return false
+        Log.d("Room","Input={$lat, $lon} Rect=> point0={${rect.lat_0}, ${rect.lon_0}} point1={${rect.lat_1}, ${rect.lon_1}}")
+        return isPointInsideRectangle(lat,lon,rect.lat_0,rect.lon_0,rect.lat_1,rect.lon_1)
+    }
+
+    private fun isPointInsideRectangle(x: Double, y: Double, rectX1: Double, rectY1: Double, rectX2: Double, rectY2: Double): Boolean {
+        return x >= minOf(rectX1, rectX2) && x <= maxOf(rectX1, rectX2) &&
+                y >= minOf(rectY1, rectY2) && y <= maxOf(rectY1, rectY2)
     }
 
     override fun toString(): String {
@@ -31,26 +36,30 @@ class Room(public val room:String,public val address:String,public val lat:Doubl
     }
 }
 
-data class Rect(val lat_0:Double,val lon_0:Double,val lat_1:Double,val lon_1:Double){
+data class Rect(public val lat_0:Double,public val lon_0:Double,public val lat_1:Double,public val lon_1:Double){
     companion object {
 
         fun calculateRect(lat: Double, lon: Double): Rect {
-            val R=6378137
+            Log.d("Rect","Calculating... $lat, $lon")
+            val R = 6378137.0
 
-            //offsets i meter
-            val dn = 10
-            val de = 10
+            val dn = 50
+            val de = 50
 
-            val dLat = dn/R
-            val dLon = de/(R* cos(Math.PI*lat/180))
+            val latRad = lat * PI / 180
 
-            val lat_0 = lat + dLat * 180/Math.PI
-            val lon_0 = lon + dLon * 180/Math.PI
+            val dLat = dn / R
+            val dLon = de / (R * cos(latRad))
 
-            val lat_1 = lat - dLat * 180/Math.PI
-            val lon_1 = lon - dLon * 180/Math.PI
+            val lat0 = lat + dLat * 180 / PI
+            val lon0 = lon + dLon * 180 / PI
+            val lat1 = lat - dLat * 180 / PI
+            val lon1 = lon - dLon * 180 / PI
 
-            return Rect(lat_0, lon_0, lat_1, lon_1)
+            Log.d("Rect","Point 0 = $lat0, $lon0")
+            Log.d("Rect","Point 1 = $lat1, $lon1")
+
+            return Rect(lat0, lon0, lat1, lon1)
         }
     }
 }

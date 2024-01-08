@@ -61,7 +61,7 @@ fun Home(vm: ChatVM, navController: NavController, locationVM: LocationVM) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TopButtonBar(vm = vm,navController = navController)
-        Chats(vm = vm,navController = navController)
+        Chats(vm = vm,navController = navController,locationVM = locationVM)
 
 
     }
@@ -106,7 +106,7 @@ fun TopButtonBar(vm: ChatVM, navController: NavController) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Chats(vm: ChatVM,navController: NavController){
+fun Chats(vm: ChatVM,navController: NavController,locationVM: LocationVM){
     ElevatedCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground,),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp,),
@@ -116,7 +116,15 @@ fun Chats(vm: ChatVM,navController: NavController){
     ){
 
         ChatPreview(vm =vm ,navController = navController)
-
+        Button(onClick = { locationVM.updateLocation() }) {
+            Text("Update Location")
+        }
+        Button(onClick = { locationVM.saveRoom() }) {
+            Text("Save room")
+        }
+        Button(onClick = { locationVM.getMyCurrentRoomName() }) {
+            Text("Save room")
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize(),
@@ -132,6 +140,7 @@ fun Chats(vm: ChatVM,navController: NavController){
                     tint = MaterialTheme.colorScheme.secondary
                 )
             }
+
         }
     }
 }
