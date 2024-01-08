@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -53,6 +54,8 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Home(vm: ChatVM, navController: NavController, locationVM: LocationVM) {
+    InitDataFromComposabelHelper(vm = vm,locationVM = locationVM)
+
     Column(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp)
@@ -62,8 +65,6 @@ fun Home(vm: ChatVM, navController: NavController, locationVM: LocationVM) {
     ) {
         TopButtonBar(vm = vm,navController = navController)
         Chats(vm = vm,navController = navController,locationVM = locationVM)
-
-
     }
 }
 @Composable
@@ -116,15 +117,7 @@ fun Chats(vm: ChatVM,navController: NavController,locationVM: LocationVM){
     ){
 
         ChatPreview(vm =vm ,navController = navController)
-        Button(onClick = { locationVM.updateLocation() }) {
-            Text("Update Location")
-        }
-        Button(onClick = { locationVM.saveRoom() }) {
-            Text("Save room")
-        }
-        Button(onClick = { locationVM.getMyCurrentRoomName() }) {
-            Text("Save room")
-        }
+//        BalderDebugButtons(locationVM = locationVM)//TODO SÄT PÅ FÖR DEBUGING
         Box(
             modifier = Modifier
                 .fillMaxSize(),
@@ -145,7 +138,18 @@ fun Chats(vm: ChatVM,navController: NavController,locationVM: LocationVM){
     }
 }
 
-
+@Composable
+fun BalderDebugButtons(locationVM: LocationVM) {
+    Button(onClick = { locationVM.updateLocation() }) {
+        Text("Update Location")
+    }
+    Button(onClick = { locationVM.saveRoom() }) {
+        Text("Save room")
+    }
+    Button(onClick = { locationVM.getMyCurrentRoomName() }) {
+        Text("Save room")
+    }
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -233,8 +237,12 @@ fun ProfilePictureStack(profileUrls: List<String>) {
             }
         }
     }
-
 }
 
+@Composable
+fun InitDataFromComposabelHelper(vm: ChatVM,locationVM: LocationVM) {
+    vm.setSystemInDarkTheme(isSystemInDarkTheme())
+    vm.updateUser(locationVM.getMyCurrentRoomName())
+}
 
 

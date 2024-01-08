@@ -33,12 +33,14 @@ fun StatusBar(vm: ChatVM) {
             modifier = Modifier.padding(5.dp)
         ){
             items(uniqueRoomMessages) { message ->
-                Room(
-                    vm = vm,
-                    listOfMessegesFromRoom = vm.getMessagesForRoom(message.room ?: ""),
-                    roomName = message.room ?: "Unknown Room from StatusBar.kt"
-                )
-                Spacer(modifier =Modifier.size(5.dp))
+                if(message.room != null){
+                    Room(
+                        vm = vm,
+                        listOfMessegesFromRoom = vm.getMessagesForRoom(message.room),
+                        roomName = message.room
+                    )
+                    Spacer(modifier =Modifier.size(5.dp))
+                }
             }
         }
     }

@@ -174,13 +174,15 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                         modifier = Modifier.width(60.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        Text(
-                            text="Makerspace",//TODO REPLACE WITH ROOM NAME
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Start,
-                        )
+                        message.room?.let {
+                            Text(
+                                text= it,
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Start,
+                            )
+                        }
                     }
                     Row(
                         modifier = Modifier.width(60.dp),
@@ -240,13 +242,15 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                             modifier = Modifier.width(60.dp),
                             horizontalArrangement = Arrangement.Start
                         ) {
-                            Text(
-                                text="Makerspace",//TODO REPLACE WITH ROOM NAME
-                                color = MaterialTheme.colorScheme.secondary,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Start,
-                            )
+                            message.room?.let {
+                                Text(
+                                    text= it,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Start,
+                                )
+                            }
                         }
                         Row(
                             modifier = Modifier.width(60.dp),

@@ -43,7 +43,7 @@ fun Room(vm:ChatVM, listOfMessegesFromRoom: List<Message>, roomName: String) {
                 text = roomName, //TODO SÄT PÅ NÄR ROOM NAME FUNGERAR
 //                text = "Makerspace",
                 modifier = Modifier
-                    .padding(start = 8.dp)
+                    .padding(horizontal = 4.dp)
                     .background(color = MaterialTheme.colorScheme.onBackground),
                 fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.secondary,

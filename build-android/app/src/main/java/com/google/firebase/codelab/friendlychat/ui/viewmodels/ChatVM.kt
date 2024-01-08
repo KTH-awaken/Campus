@@ -1,6 +1,7 @@
 package com.example.campus.ui.viewmodels
 
 import android.util.Log
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.codelab.friendlychat.model.Message
@@ -12,9 +13,16 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseReference, public val auth: FirebaseAuth): ViewModel(){
+class ChatVM(
+     val db: FirebaseDatabase,
+     val messagesRef: DatabaseReference,
+     val auth: FirebaseAuth,
+    usersRef: DatabaseReference
+): ViewModel(){
     //class data
-    private var _darkMode = MutableStateFlow<Boolean>(false)
+
+    var isSystemInDarkTheme = MutableStateFlow(false)
+    private var _darkMode = MutableStateFlow<Boolean>(isSystemInDarkTheme.value)
     val darkMode: StateFlow<Boolean> get() = _darkMode
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
     val messages: StateFlow<List<Message>> = _messages
@@ -65,6 +73,13 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
     fun setDarkMode(value: Boolean){
         _darkMode.value = value
         Log.d("MarcusTAG2", "darkMode: ${_darkMode.value}")
+    }
+
+    fun setSystemInDarkTheme(value: Boolean){
+        isSystemInDarkTheme.value = value
+        setDarkMode(isSystemInDarkTheme.value)
+        Log.d("MarcusTAG system dark them", "isSystemInDarkTheme: ${isSystemInDarkTheme.value}")
+        Log.d("MarcusTAG2 system", "darkMode: ${_darkMode.value}")
     }
 
     fun isMyMessage(message: Message): Boolean {
@@ -128,6 +143,14 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
 
     fun getMessagesForRoom(roomName: String): List<Message> {
         return _messages.value.filter { it.room == roomName }
+    }
+
+    fun updateUser(roomName: String){
+        val user = auth.currentUser
+        if (user != null) {
+            val userRef = db.getReference("users/${user.uid}")
+            userRef.child("room").setValue(roomName)
+        }
     }
 }
 

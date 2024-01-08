@@ -83,7 +83,7 @@ class LocationVM(application: Application, private val activity: ComponentActivi
     fun getMyCurrentRoomName(): String{
         val myRoom = getCurrentRoom()
         if(myRoom==null)
-            return "My room is null"
+            return "Home1"
         val latitude = myRoom.lat
         val longitude = myRoom.lon
 
@@ -104,7 +104,7 @@ class LocationVM(application: Application, private val activity: ComponentActivi
             return h.room
         }
         Log.d("LocationVM","No room found")
-        return "no room found"
+        return "Home2"
     }
 
 

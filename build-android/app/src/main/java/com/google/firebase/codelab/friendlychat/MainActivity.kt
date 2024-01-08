@@ -36,9 +36,11 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.codelab.friendlychat.ui.screens.Chat
 
 import com.google.firebase.codelab.friendlychat.data.sensors.GpsManager
+import com.google.firebase.codelab.friendlychat.model.User
 import com.google.firebase.codelab.friendlychat.ui.viewmodels.LocationVM
 
 class MainActivity : AppCompatActivity() {
@@ -58,11 +60,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val locationVM = LocationVM(application,this)
         locationVM.updateLocation()
-        setContent { //TODO FROM CAMPUS
-
+        setContent {
             val navController = rememberNavController()
             val vm: ChatVM = viewModel()
             val darkMode by vm.darkMode.collectAsState()
+
+            vm.updateUser(locationVM.getMyCurrentRoom())
             CampusTheme(darkTheme = darkMode){
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -73,9 +76,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-
-
         // Initialize Firebase Auth and check if the user is signed in
         auth = Firebase.auth
         if (auth.currentUser == null) {
@@ -85,16 +85,25 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+
         // Initialize Realtime Database
         db = Firebase.database
         val messagesRef = db.reference.child(MESSAGES_CHILD)
+        val usersRef = db.reference.child("users")
 
+
+        if(!userIsInDatabase(auth.currentUser!!)){
+            Log.d("MarcusTagUser",auth.currentUser!!.displayName.toString()+" added to database")
+            addUserToDatabase(auth.currentUser!!)
+        }else{
+            Log.d("MarcusTagUser","User already in database")
+        }
 
 
         setContent {
             val navController = rememberNavController()
             val vm: ChatVM = viewModel {
-                ChatVM(db, messagesRef, auth)
+                ChatVM(db, messagesRef, auth, usersRef)
             }
             val darkMode by vm.darkMode.collectAsState()
             CampusTheme(darkTheme = darkMode){
@@ -263,6 +272,23 @@ class MainActivity : AppCompatActivity() {
         const val MESSAGES_CHILD = "messages"
         const val ANONYMOUS = "anonymous"
         private const val LOADING_IMAGE_URL = "https://www.google.com/images/spin-32.gif"
+    }
+
+    fun userIsInDatabase(user: FirebaseUser):Boolean{
+        val usersRef = db.reference.child("users")
+        val userRef = usersRef.child(user.uid)
+        var userExists = false
+        userRef.get().addOnSuccessListener {
+            userExists = it.exists()
+        }
+        return userExists
+    }
+
+    fun addUserToDatabase(user: FirebaseUser){
+        val usersRef = db.reference.child("users")
+        val userRef = usersRef.child(user.uid)
+        val userObject = User(user.uid, user.displayName, user.photoUrl.toString(), user.email)
+        userRef.setValue(userObject)
     }
 }
 

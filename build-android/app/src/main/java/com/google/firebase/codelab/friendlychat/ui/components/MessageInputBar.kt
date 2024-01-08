@@ -115,7 +115,7 @@ fun CustomBasicTextField(vm: ChatVM,locationVM: LocationVM) {
             IconButton(onClick = {
                 if (text.isNotBlank()) {
                     val timeStamp: String = System.currentTimeMillis().toString()
-                    vm.sendMessage(text, vm.auth.currentUser!!.displayName!!, vm.auth.currentUser!!.photoUrl.toString(),timeStamp,locationVM.getMyCurrentRoom())
+                    vm.sendMessage(text, vm.auth.currentUser!!.displayName!!, vm.auth.currentUser!!.photoUrl.toString(),timeStamp,locationVM.getMyCurrentRoomName())
                     text = ""
                 }
             }) {
