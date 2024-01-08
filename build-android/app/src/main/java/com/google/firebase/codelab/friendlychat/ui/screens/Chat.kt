@@ -175,7 +175,7 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                         horizontalArrangement = Arrangement.End
                     ) {
                         Text(
-                            text="Makerspace",
+                            text="Makerspace",//TODO REPLACE WITH ROOM NAME
                             color = MaterialTheme.colorScheme.secondary,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
@@ -233,13 +233,6 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                         .fillMaxWidth()
                         .align(Alignment.Bottom), // Align the time text to the bottom start
                 ) {
-//                    Text(
-//                        modifier = Modifier.padding(start = 4.dp, bottom = 10.dp),
-//                        text = formattedTime,
-//                        color = MaterialTheme.colorScheme.secondary,
-//                        fontSize = 10.sp,
-//                        textAlign = TextAlign.Start,
-//                    )
                     Column (
                         verticalArrangement = Arrangement.Bottom
                     ){
@@ -248,7 +241,7 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                             horizontalArrangement = Arrangement.Start
                         ) {
                             Text(
-                                text="Makerspace",
+                                text="Makerspace",//TODO REPLACE WITH ROOM NAME
                                 color = MaterialTheme.colorScheme.secondary,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,

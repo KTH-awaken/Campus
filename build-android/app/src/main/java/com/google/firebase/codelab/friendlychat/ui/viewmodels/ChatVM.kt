@@ -111,7 +111,6 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
             val userName = message.name
             if (userName != null) {
                 val existingMessage = latestMessagesMap[userName]
-                // Compare the timestamps, and update with the newer message
                 if (existingMessage == null || message.isNewerThan(existingMessage)) {
                     latestMessagesMap[userName] = message
                 }

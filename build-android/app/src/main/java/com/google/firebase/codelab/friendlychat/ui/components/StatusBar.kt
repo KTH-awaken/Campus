@@ -1,5 +1,7 @@
 package com.google.firebase.codelab.friendlychat.ui.components
 
+import android.util.Log
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,13 +27,18 @@ fun StatusBar(vm: ChatVM) {
             .size(height = 62.dp, width = 100.dp),
     ){
         val allLatestMessages = vm.getAllLatestMessagesFomEachUser()
-        LazyRow {
-            items(allLatestMessages) { message ->
+        val uniqueRoomMessages = allLatestMessages.distinctBy { it.room }
+        Log.d("MarcusTAGlATESTMESSAGES", allLatestMessages.toString())
+        LazyRow (
+            modifier = Modifier.padding(5.dp)
+        ){
+            items(uniqueRoomMessages) { message ->
                 Room(
                     vm = vm,
                     listOfMessegesFromRoom = vm.getMessagesForRoom(message.room ?: ""),
                     roomName = message.room ?: "Unknown Room from StatusBar.kt"
                 )
+                Spacer(modifier =Modifier.size(5.dp))
             }
         }
     }
