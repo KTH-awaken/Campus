@@ -167,14 +167,15 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                 ProfilePictureBubble(message.photoUrl ?: "", 37.dp)
                 Spacer(modifier = Modifier.size(2.dp))
             }else{
-                Column (verticalArrangement = Arrangement.Bottom){
+
+                Column (
+                    verticalArrangement = Arrangement.Bottom){
                     Row(
-                        //todo behöver va samma widht som rade under
+                        modifier = Modifier.width(60.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
                         Text(
-
-                            text="TEST",
+                            text="Makerspace",
                             color = MaterialTheme.colorScheme.secondary,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
@@ -182,7 +183,8 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                         )
                     }
                     Row(
-
+                        modifier = Modifier.width(60.dp),
+                        horizontalArrangement = Arrangement.End,
                     ) {
                         Text(
                             modifier = Modifier
@@ -231,14 +233,41 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                         .fillMaxWidth()
                         .align(Alignment.Bottom), // Align the time text to the bottom start
                 ) {
-                    Text(
-                        modifier = Modifier.padding(start = 4.dp, bottom = 10.dp),
-                        text = formattedTime,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 10.sp,
-                        textAlign = TextAlign.Start,
-                    )
-                //TODO ADD TEXT OF CURRENT ROM IN BOLD
+//                    Text(
+//                        modifier = Modifier.padding(start = 4.dp, bottom = 10.dp),
+//                        text = formattedTime,
+//                        color = MaterialTheme.colorScheme.secondary,
+//                        fontSize = 10.sp,
+//                        textAlign = TextAlign.Start,
+//                    )
+                    Column (
+                        verticalArrangement = Arrangement.Bottom
+                    ){
+                        Row(
+                            modifier = Modifier.width(60.dp),
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Text(
+                                text="Makerspace",
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Start,
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.width(60.dp),
+                            horizontalArrangement = Arrangement.Start,
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(end = 4.dp, bottom = 10.dp),
+                                text=formattedTime,
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = 10.sp,
+                            )
+                        }
+                    }
                 }
 
             }
