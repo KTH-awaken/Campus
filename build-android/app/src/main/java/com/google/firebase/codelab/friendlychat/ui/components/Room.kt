@@ -22,10 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.campus.ui.viewmodels.ChatVM
+import com.google.firebase.codelab.friendlychat.model.Message
 
 @Composable
-fun Room(vm:ChatVM) {
-    val profilePictures = vm.getAllMembersUniqueUrlsProfilePhotosFromChat()
+fun Room(vm:ChatVM, listOfMessegesFromRoom: List<Message>, roomName: String) {
+//    val profilePictures = vm.getAllMembersUniqueUrlsProfilePhotosFromChat()
+    val profilePicturesForMembersInRoom = vm.getAllMembersUniqueUrlsProfilePhotosFromChat(listOfMessegesFromRoom)
     Card(
         modifier = Modifier
             .padding(6.dp)
@@ -44,16 +46,16 @@ fun Room(vm:ChatVM) {
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.background( MaterialTheme.colorScheme.onBackground),
         ) {
-            profilePictures.forEach { photoUrl ->
+            profilePicturesForMembersInRoom.forEach { photoUrl ->
                 ProfilePictureBubble(photoUrl = photoUrl, imageSize = 37.dp)
 
             }
             Text(
-                text = "Rudan",
+                text = roomName,
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .background(color = MaterialTheme.colorScheme.onBackground),
-                fontSize = 3.sp,
+                fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.secondary,
             )
 

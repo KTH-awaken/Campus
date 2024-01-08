@@ -23,3 +23,5 @@ data class Message(
     val timeStamp: String? = null,
     val room: String? = null,
 )
+
+

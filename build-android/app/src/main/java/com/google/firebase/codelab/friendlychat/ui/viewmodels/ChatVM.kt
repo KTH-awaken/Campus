@@ -84,15 +84,18 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
         }
         return allMembersProfilePhotos
     }
-    fun getAllMembersUniqueUrlsProfilePhotosFromChat(): List<String> {
-        val allMembersProfilePhotos = mutableListOf<String>()
-        for (message in _messages.value) {
+
+    fun getAllMembersUniqueUrlsProfilePhotosFromChat(messages :List<Message>): List<String> {
+        val membersProfilePhotos = mutableListOf<String>()
+
+        for (message in messages) {
             if (message.photoUrl != null) {
-                allMembersProfilePhotos.add(message.photoUrl)
+                membersProfilePhotos.add(message.photoUrl)
             }
         }
-        return allMembersProfilePhotos.distinct()
+        return membersProfilePhotos.distinct()
     }
+
     fun getFirstName(Message: Message): String {
         return Message.name?.split(" ")?.get(0) ?: "Unknown"
     }
@@ -101,5 +104,31 @@ class ChatVM(public val db: FirebaseDatabase, public val messagesRef: DatabaseRe
         auth.signOut()
     }
 
+    fun getAllLatestMessagesFomEachUser(): List<Message> {
+        val latestMessagesMap = mutableMapOf<String, Message>()
+
+        for (message in _messages.value) {
+            val userName = message.name
+            if (userName != null) {
+                val existingMessage = latestMessagesMap[userName]
+                // Compare the timestamps, and update with the newer message
+                if (existingMessage == null || message.isNewerThan(existingMessage)) {
+                    latestMessagesMap[userName] = message
+                }
+            }
+        }
+        return latestMessagesMap.values.toList()
+    }
+
+
+    private fun Message.isNewerThan(other: Message): Boolean {
+        val thisTimeStamp = this.timeStamp?.toLongOrNull() ?: 0L
+        val otherTimeStamp = other.timeStamp?.toLongOrNull() ?: 0L
+        return thisTimeStamp > otherTimeStamp
+    }
+
+    fun getMessagesForRoom(roomName: String): List<Message> {
+        return _messages.value.filter { it.room == roomName }
+    }
 }
 

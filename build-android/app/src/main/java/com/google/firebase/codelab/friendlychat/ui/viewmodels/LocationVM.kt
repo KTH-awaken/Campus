@@ -58,7 +58,6 @@ class LocationVM(application: Application, private val activity: ComponentActivi
     }
 
     fun getMyCurrentRoom(): String{
-        //TODO IMPLEMENT FOR REAL
         val l = _geoLocation.value
         if(l != null){
             val address = l?.results?.first()?.formatted_address
