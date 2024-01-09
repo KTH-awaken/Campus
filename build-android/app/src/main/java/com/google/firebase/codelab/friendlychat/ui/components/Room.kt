@@ -58,8 +58,11 @@ fun Room(vm:ChatVM, listOfUserInRoom: List<User>, roomName: String) {
             ) {
 
                 usersInRoom.forEach { user ->
-                    if (user.photoUrl!=null){
-                        ProfilePictureBubble(photoUrl = user.photoUrl, imageSize = 37.dp)
+                    if (user.photoUrl!=null&&user.photoUrl!=""&&user.photoUrl!="null"){
+                        user.photoUrl?.let { ProfilePictureBubble(photoUrl = it, imageSize = 37.dp) }
+                    }
+                    if (user.photoUrl==null||user.photoUrl==""||user.photoUrl=="null"){
+                        user.displayName?.let { ProfilePictureBubble(photoUrl = it, imageSize = 37.dp) }
                     }
 
                 }

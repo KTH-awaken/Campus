@@ -99,6 +99,8 @@ class MainActivity : AppCompatActivity() {
 
         if(!userIsInDatabase(auth.currentUser!!)){
             Log.d("MarcusTagUser",auth.currentUser!!.displayName.toString()+" added to database")
+//            val mockPhotoUrl = Uri.parse(auth.currentUser!!.displayName)
+//            auth.currentUser.photoUrl=mockPhotoUrl
             addUserToDatabase(auth.currentUser!!)
             if(auth.currentUser!!.photoUrl == null||auth.currentUser!!.photoUrl.toString() == ""||auth.currentUser!!.photoUrl.toString() == "null"){
                 if(auth.currentUser!!.displayName!=null){
