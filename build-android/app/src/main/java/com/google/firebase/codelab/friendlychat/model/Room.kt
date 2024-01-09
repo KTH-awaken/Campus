@@ -26,7 +26,7 @@ data class Room(
     val floor: String = "",
     val size: Double = 25.0
 ){
-    private val rect: Rect = Rect.calculateRect(lat,lon,size)
+    val rect: Rect = Rect.calculateRect(lat,lon,size)
 
     fun isInsideRoom(lat:Double,lon:Double):Boolean{
         Log.d("Room","Input={$lat, $lon} Rect=> point0={${rect.lat_0}, ${rect.lon_0}} point1={${rect.lat_1}, ${rect.lon_1}}")
@@ -51,7 +51,7 @@ data class FakeRoom(
     val size:String? = null
 )
 
-data class Rect(public val lat_0:Double,public val lon_0:Double,public val lat_1:Double,public val lon_1:Double){
+data class Rect(public val lat_0:Double = 1.0,public val lon_0:Double = 1.0,public val lat_1:Double = 1.0,public val lon_1:Double = 1.0){
     companion object {
 
         fun calculateRect(lat: Double, lon: Double,size:Double): Rect {

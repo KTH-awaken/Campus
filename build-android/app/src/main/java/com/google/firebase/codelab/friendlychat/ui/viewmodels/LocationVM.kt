@@ -67,7 +67,7 @@ class LocationVM(
             val lat = l?.results?.first()?.geometry?.location?.lat
             val lng = l?.results?.first()?.geometry?.location?.lng
 
-            val room = Room("Room",address?:"null",lat?:0.0,lng?:0.0,"First")
+            val room = Room("Room",address?:"null",lat?:0.0,lng?:0.0,"0")
             _rooms.value += room
             Log.d("DataVM","Added room ${room.toString()}")
         }
@@ -93,9 +93,8 @@ class LocationVM(
             val lat = l?.results?.first()?.geometry?.location?.lat
             val lng = l?.results?.first()?.geometry?.location?.lng
 
-            val room = Room(roomName,address?:"null",lat?:0.0,lng?:0.0,"First",size)
-            _rooms.value += room
-            Log.d("DataVM","Added room ${room.toString()}")
+            val room = Room(roomName,address?:"null",lat?:0.0,lng?:0.0,"0",size)
+            Log.d("DataVM","get room ${room.toString()}")
             return room
         }else
             return null
@@ -119,7 +118,19 @@ class LocationVM(
 
         //TODO kontrollera foreach loop för varenda rum i lista
         Log.d("LocationVM","number of rooms=${_rooms.value.size}")
+        if(!_rooms.value.isNullOrEmpty()){
         Log.d("LocationVM","rooms=${_rooms.value}")
+            for(room in _rooms.value){
+                Log.d("LocationVM","Rooms from db = $room")
+                Log.d("LocationVM","Rect of room from db = ${room.rect}")
+                if(room.isInsideRoom(latitude,longitude)){
+                    Log.d("LocationVM","Is inside room from db = ${room}")
+                    _currentRoom.value = room
+                    return room.room
+                }
+            }
+        }
+        /*
         if( makerSpace.isInsideRoom(latitude,longitude) ){
             Log.d("LocationVM", makerSpace.room)
             return makerSpace.room
@@ -132,13 +143,8 @@ class LocationVM(
             Log.d("LocationVM", h.room)
             return h.room
         }
-        for(room in _rooms.value){
-            Log.d("LocationVM","Rooms from db = $room")
-            if(room.isInsideRoom(latitude,longitude)){
-                Log.d("LocationVM","Is inside room from db = ${room}")
-                return room.room
-            }
-        }
+
+         */
         Log.d("LocationVM","No room found")
         return "Hemma"
     }
@@ -147,8 +153,11 @@ class LocationVM(
         roomsRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val roomsList = snapshot.children.mapNotNull { it.getValue(Room::class.java) }
+                Log.d("LocationVM rooms","Number of fetched rooms=${roomsList.size}")
+                for(rooom in roomsList){
+                    Log.d("LocationVM rooms","Fetched room: $rooom")
+                }
                 _rooms.value = roomsList
-                Log.d("MarcusTAG rooms",roomsList.toString())
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -159,7 +168,7 @@ class LocationVM(
 
     fun createRoom(roomName:String,size:Double){
         val room = getCurrentRoom(roomName,size)
-        if(room==null)
+        if(room==null || room.lat <= 1 || room.lon <= 1 || room.size <= 5)
             return
         roomsRef.push().setValue(room)
     }
@@ -201,4 +210,8 @@ class LocationVM(
     private val _rooms = MutableStateFlow<List<Room>>(emptyList())
     val rooms: StateFlow<List<Room>>
         get() = _rooms
+
+    private val _currentRoom = MutableStateFlow<Room>(Room())
+    val currentRoom: StateFlow<Room>
+        get() = _currentRoom
 }
