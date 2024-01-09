@@ -58,7 +58,9 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val locationVM = LocationVM(application,this)
+        db = Firebase.database
+        val roomsRef = db.reference.child("rooms")
+        val locationVM = LocationVM(application,this,roomsRef)
         locationVM.updateLocation()
         setContent {
             val navController = rememberNavController()
@@ -88,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Initialize Realtime Database
-        db = Firebase.database
+
         val messagesRef = db.reference.child(MESSAGES_CHILD)
         val usersRef = db.reference.child("users")
 
@@ -101,21 +103,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        setContent {
-            val navController = rememberNavController()
-            val vm: ChatVM = viewModel {
-                ChatVM(db, messagesRef, auth, usersRef)
-            }
-            val darkMode by vm.darkMode.collectAsState()
-            CampusTheme(darkTheme = darkMode){
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    NavigationGraph(navController = navController, vm = vm, locationVM = locationVM)
-                }
-            }
-        }
+
     }
 
     public fun oldViewBining(db: FirebaseDatabase, messagesRef: DatabaseReference){
