@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -45,7 +46,7 @@ import com.google.firebase.codelab.friendlychat.ui.viewmodels.LocationVM
 
 
 @Composable
-fun CustomBasicTextField(vm: ChatVM,locationVM: LocationVM) {
+fun CustomBasicTextField(vm: ChatVM, locationVM: LocationVM, scrollState: LazyListState) {
     var text by remember { mutableStateOf("") }
     var isFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -118,6 +119,7 @@ fun CustomBasicTextField(vm: ChatVM,locationVM: LocationVM) {
                     vm.sendMessage(text, vm.auth.currentUser!!.displayName!!, vm.auth.currentUser!!.photoUrl.toString(),timeStamp,locationVM.getMyCurrentRoomName())
                     text = ""
                     locationVM.updateUser()
+
                 }
             }) {
                 Icon(

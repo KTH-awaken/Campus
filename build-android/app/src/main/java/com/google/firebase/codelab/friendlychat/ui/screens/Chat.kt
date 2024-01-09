@@ -25,8 +25,10 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,7 +51,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.TextStyle
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -96,6 +97,12 @@ fun TopBar(vm: ChatVM, navController: NavController) {
 fun ChatCard(vm: ChatVM, locationVM: LocationVM){
     val messages by vm.messages.collectAsState()
     val scrollState = rememberLazyListState()
+
+    LaunchedEffect(messages) {
+        scrollState.animateScrollToItem(index = messages.size - 1)
+    }
+
+
     ElevatedCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground,),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp,),
@@ -119,10 +126,12 @@ fun ChatCard(vm: ChatVM, locationVM: LocationVM){
                     MessageBubble(message,vm)
                 }
             }
-            CustomBasicTextField(vm = vm, locationVM = locationVM)
+            CustomBasicTextField(vm = vm, locationVM = locationVM,scrollState = scrollState)
         }
     }
 }
+
+
 
 @RequiresApi(Build.VERSION_CODES.O)//TODO CHECK IF CAN BE REMOVED IF CAUSES PROBLEMS AND CAUSE ITS UGLY
 @Composable
@@ -202,7 +211,7 @@ fun MessageBubble(message: Message,vm: ChatVM) {
             Card(
                     colors = if (vm.isMyMessage(message)) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary) else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiary),
                 modifier = Modifier
-                    .widthIn(max = 250.dp)
+                    .widthIn(max = 200.dp)
                     .padding(top = 3.dp)
                     .onGloballyPositioned { layoutCoordinates ->
                         shape =

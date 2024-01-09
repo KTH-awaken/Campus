@@ -95,6 +95,7 @@ class LocationVM(
     }
     //Den ska ge rummet jag är i och även updtera min position
     fun getMyCurrentRoomName(): String{
+
         val myRoom = getCurrentRoom()
         if(myRoom==null)
             return "Hemma"

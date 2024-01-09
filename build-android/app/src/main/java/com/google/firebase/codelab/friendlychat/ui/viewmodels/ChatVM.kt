@@ -63,7 +63,6 @@ class ChatVM(
                 _users.value = usersList
                 Log.d("MarcusTAG users",usersList.toString())
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.e("ChatVM", "Error listening for users", error.toException())
             }
@@ -78,7 +77,7 @@ class ChatVM(
         currentRoom: String?
     ){
         var photoUrlToSave = photoUrl
-        if (photoUrl==null||photoUrl==""){
+        if (photoUrl==null||photoUrl==""||photoUrl=="null"){
             photoUrlToSave=userName
         }
         val message = Message(text, userName, photoUrlToSave, null, timeStamp, currentRoom)
