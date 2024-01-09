@@ -117,15 +117,9 @@ class LocationVM(
         val h = Room("H","Röntgenvägen 7, 141 52 Huddinge", 59.22159,17.93675,"0")
         //todo matsalen t2 osv redovisnings rummet t65 Huddinge
 
-        for(room in _rooms.value){
-            Log.d("LocationVM","Rooms from db = $room")
-            if(room.isInsideRoom(latitude,longitude)){
-                Log.d("LocationVM","Is inside room from db = ${room}")
-                return room.room
-            }
-        }
-
         //TODO kontrollera foreach loop för varenda rum i lista
+        Log.d("LocationVM","number of rooms=${_rooms.value.size}")
+        Log.d("LocationVM","rooms=${_rooms.value}")
         if( makerSpace.isInsideRoom(latitude,longitude) ){
             Log.d("LocationVM", makerSpace.room)
             return makerSpace.room
@@ -138,6 +132,13 @@ class LocationVM(
             Log.d("LocationVM", h.room)
             return h.room
         }
+        for(room in _rooms.value){
+            Log.d("LocationVM","Rooms from db = $room")
+            if(room.isInsideRoom(latitude,longitude)){
+                Log.d("LocationVM","Is inside room from db = ${room}")
+                return room.room
+            }
+        }
         Log.d("LocationVM","No room found")
         return "Hemma"
     }
@@ -147,11 +148,11 @@ class LocationVM(
             override fun onDataChange(snapshot: DataSnapshot) {
                 val roomsList = snapshot.children.mapNotNull { it.getValue(Room::class.java) }
                 _rooms.value = roomsList
-                Log.d("MarcusTAG users",roomsList.toString())
+                Log.d("MarcusTAG rooms",roomsList.toString())
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("ChatVM", "Error listening for users", error.toException())
+                Log.e("ChatVM", "Error listening for rooms", error.toException())
             }
         })
     }
