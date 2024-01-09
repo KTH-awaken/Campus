@@ -128,9 +128,9 @@ class LocationVM(
         if (user != null) {
             val userRef = db.getReference("users/${user.uid}")
             userRef.child("room").setValue(getMyCurrentRoomName())
-//            if (auth.currentUser?.displayName == "null" || auth.currentUser == null) {
-//                userRef.child("photoUrl").setValue(auth.currentUser?.displayName)
-//            }
+            if (auth.currentUser?.displayName == "null" || auth.currentUser == null) {
+                userRef.child("photoUrl").setValue(auth.currentUser?.displayName)
+            }
         }
     }
     fun updateUserOnInterval(delay: Long){

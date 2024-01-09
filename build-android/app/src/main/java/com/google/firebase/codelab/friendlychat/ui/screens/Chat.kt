@@ -93,13 +93,15 @@ fun TopBar(vm: ChatVM, navController: NavController) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ChatCard(vm: ChatVM, locationVM: LocationVM){
+fun ChatCard(vm: ChatVM, locationVM: LocationVM) {
     val messages by vm.messages.collectAsState()
     val scrollState = rememberLazyListState()
 
-//    LaunchedEffect(messages) {todo sät på
-//        scrollState.animateScrollToItem(index = messages.size - 1)
-//    }
+    if (messages.size > 2) {
+        LaunchedEffect(messages){
+        scrollState.animateScrollToItem(index = messages.size - 1)
+        }
+    }
 
     ElevatedCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground,),
