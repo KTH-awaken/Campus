@@ -57,6 +57,29 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        db = Firebase.database
+        val roomsRef = db.reference.child("rooms")
+        val locationVM = LocationVM(application,this,roomsRef)
+        locationVM.updateLocation()
+        setContent {
+            val navController = rememberNavController()
+            val vm: ChatVM = viewModel()
+            val darkMode by vm.darkMode.collectAsState()
+
+            /*updater location varje 60 seconds max 10 users just nu antal writes
+             blir max 1440 per dag och gränsen är 20K per dag*/
+            vm.updateUserOnInterval(60000,locationVM.getMyCurrentRoom())
+            CampusTheme(darkTheme = darkMode){
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    NavigationGraph(navController = navController, vm = vm, locationVM = locationVM )
+                }
+            }
+        }
+
         // Initialize Firebase Auth and check if the user is signed in
         auth = Firebase.auth
         if (auth.currentUser == null) {
@@ -67,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Initialize Realtime Database
-        db = Firebase.database
+
         val messagesRef = db.reference.child(MESSAGES_CHILD)
         val usersRef = db.reference.child("users")
 
