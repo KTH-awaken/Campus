@@ -161,7 +161,7 @@ class LocationVM(
         val room = getCurrentRoom(roomName,size)
         if(room==null)
             return
-        roomsRef.push().setValue(FakeRoom(roomName,room.address,room.lat.toString(),room.lon.toString(),room.floor,size.toString()))
+        roomsRef.push().setValue(room)
     }
 
     fun getRooms():List<Room>{

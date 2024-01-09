@@ -18,7 +18,14 @@ data class Room(val room:String,val address:String,val lat:Double,val lon:Double
 }
 
  */
-class Room(public val room:String,public val address:String,public val lat:Double,public val lon:Double,public val floor:String,size:Double = 25.0){
+data class Room(
+    val room: String = "",
+    val address: String = "",
+    val lat: Double = 0.0,
+    val lon: Double = 0.0,
+    val floor: String = "",
+    val size: Double = 25.0
+){
     private val rect: Rect = Rect.calculateRect(lat,lon,size)
 
     fun isInsideRoom(lat:Double,lon:Double):Boolean{
