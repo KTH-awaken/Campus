@@ -99,6 +99,12 @@ class MainActivity : AppCompatActivity() {
         if(!userIsInDatabase(auth.currentUser!!)){
             Log.d("MarcusTagUser",auth.currentUser!!.displayName.toString()+" added to database")
             addUserToDatabase(auth.currentUser!!)
+//            if(auth.currentUser!!.photoUrl == null||auth.currentUser!!.photoUrl.toString() == ""||auth.currentUser!!.photoUrl.toString() == "null"){
+//                if(auth.currentUser!!.displayName!=null){
+//                    usersRef.child("photoUrl").setValue(auth.currentUser?.displayName)
+//
+//                }
+//            }
         }else{
             Log.d("MarcusTagUser","User already in database")
         }
