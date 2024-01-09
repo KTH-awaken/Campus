@@ -1,6 +1,6 @@
 Campus is a real-time location chat available on Android.
 
-Download campus.apk: https://ufile.io/s03bl2ox
+Download campus.apk: https://ufile.io/vnczlnyz
 
 1. Choose Free Download.
 2. Click Accept Download.
