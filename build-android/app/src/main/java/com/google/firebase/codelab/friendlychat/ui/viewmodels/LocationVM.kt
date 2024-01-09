@@ -79,10 +79,10 @@ class LocationVM(
 
     fun getMyCurrentRoom(): String{
         //TODO IMPLEMENT FOR REAL
-        val currentRoom = getCurrentRoom("Room")
+        val currentRoom = getCurrentRoom("Unkonwn2")
         if(currentRoom != null)
             return currentRoom.room.toString()
-        return "No room"
+        return "Unkonwn1"
     }
 
     private fun getCurrentRoom(roomName:String,size:Double):Room?{
@@ -104,7 +104,7 @@ class LocationVM(
     }
     //Den ska ge rummet jag är i och även updtera min position
     fun getMyCurrentRoomName(): String{
-        val myRoom = getCurrentRoom("Room")
+        val myRoom = getCurrentRoom("Uknown0")
         if(myRoom==null)
             return "Hemma"
         val latitude = myRoom.lat
