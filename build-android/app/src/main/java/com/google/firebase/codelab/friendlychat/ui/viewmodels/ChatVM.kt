@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.codelab.friendlychat.model.Message
+import com.google.firebase.codelab.friendlychat.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -21,7 +22,7 @@ class ChatVM(
      val db: FirebaseDatabase,
      val messagesRef: DatabaseReference,
      val auth: FirebaseAuth,
-    usersRef: DatabaseReference
+    val usersRef: DatabaseReference
 ): ViewModel(){
     //class data
 
@@ -30,15 +31,16 @@ class ChatVM(
     val darkMode: StateFlow<Boolean> get() = _darkMode
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
     val messages: StateFlow<List<Message>> = _messages
+    private val _users = MutableStateFlow<List<User>>(emptyList())
+    val users: StateFlow<List<User>> get() = _users
 
     private val _textInput = MutableStateFlow("")
     val textInput: StateFlow<String> get() = _textInput
 
-
-
     //init
     init {
         listenForMessages()
+        listenForUsers()
     }
 
     //class funktioner
@@ -48,9 +50,22 @@ class ChatVM(
                 val messagesList = snapshot.children.mapNotNull { it.getValue(Message::class.java) }
                 _messages.value = messagesList
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.e("ChatVM", "Error listening for messages", error.toException())
+            }
+        })
+    }
+
+    private fun listenForUsers() {
+        usersRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val usersList = snapshot.children.mapNotNull { it.getValue(User::class.java) }
+                _users.value = usersList
+                Log.d("MarcusTAG users",usersList.toString())
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("ChatVM", "Error listening for users", error.toException())
             }
         })
     }
@@ -66,10 +81,9 @@ class ChatVM(
         if (photoUrl==null||photoUrl==""){
             photoUrlToSave=userName
         }
-        //todo add my location in message
         val message = Message(text, userName, photoUrlToSave, null, timeStamp, currentRoom)
         if (currentRoom != null) {
-            Log.d("MarcusTAGRoom",currentRoom)
+            updateUser(currentRoom)
         }
         messagesRef.push().setValue(message)
     }
@@ -104,17 +118,6 @@ class ChatVM(
         return allMembersProfilePhotos
     }
 
-    fun getAllMembersUniqueUrlsProfilePhotosFromChat(messages :List<Message>): List<String> {
-        val membersProfilePhotos = mutableListOf<String>()
-
-        for (message in messages) {
-            if (message.photoUrl != null) {
-                membersProfilePhotos.add(message.photoUrl)
-            }
-        }
-        return membersProfilePhotos.distinct()
-    }
-
     fun getFirstName(Message: Message): String {
         return Message.name?.split(" ")?.get(0) ?: "Unknown"
     }
@@ -122,22 +125,6 @@ class ChatVM(
     fun signOut(){
         auth.signOut()
     }
-
-    fun getAllLatestMessagesFomEachUser(): List<Message> {
-        val latestMessagesMap = mutableMapOf<String, Message>()
-
-        for (message in _messages.value) {
-            val userName = message.name
-            if (userName != null) {
-                val existingMessage = latestMessagesMap[userName]
-                if (existingMessage == null || message.isNewerThan(existingMessage)) {
-                    latestMessagesMap[userName] = message
-                }
-            }
-        }
-        return latestMessagesMap.values.toList()
-    }
-
 
     private fun Message.isNewerThan(other: Message): Boolean {
         val thisTimeStamp = this.timeStamp?.toLongOrNull() ?: 0L
@@ -164,6 +151,32 @@ class ChatVM(
                 delay(delay)
             }
         }
+    }
+
+    fun getAllLatestMessagesFomEachUser(): List<Message> {//TODO REOMVE
+        val latestMessagesMap = mutableMapOf<String, Message>()
+
+        for (message in _messages.value) {
+            val userName = message.name
+            if (userName != null) {
+                val existingMessage = latestMessagesMap[userName]
+                if (existingMessage == null || message.isNewerThan(existingMessage)) {
+                    latestMessagesMap[userName] = message
+                }
+            }
+        }
+        return latestMessagesMap.values.toList()
+    }
+
+    fun getAllMembersUniqueUrlsProfilePhotosFromChat(messages :List<Message>): List<String> {//TODO REOMVE
+        val membersProfilePhotos = mutableListOf<String>()
+
+        for (message in messages) {
+            if (message.photoUrl != null) {
+                membersProfilePhotos.add(message.photoUrl)
+            }
+        }
+        return membersProfilePhotos.distinct()
     }
 }
 

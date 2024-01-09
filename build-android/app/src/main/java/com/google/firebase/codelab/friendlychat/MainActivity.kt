@@ -87,7 +87,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-
         // Initialize Realtime Database
         db = Firebase.database
         val messagesRef = db.reference.child(MESSAGES_CHILD)

@@ -6,6 +6,6 @@ pluginManagement {
     }
 }
 
-include(":build-android:app",
-        ":build-android-start:app"
+include(
+    ":build-android:app",
 )

@@ -25,10 +25,12 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.campus.ui.viewmodels.ChatVM
 import com.google.firebase.codelab.friendlychat.model.Message
+import com.google.firebase.codelab.friendlychat.model.User
 
 @Composable
-fun Room(vm:ChatVM, listOfMessegesFromRoom: List<Message>, roomName: String) {
-    val profilePicturesForMembersInRoom = vm.getAllMembersUniqueUrlsProfilePhotosFromChat(listOfMessegesFromRoom)
+fun Room(vm:ChatVM, listOfUserInRoom: List<User>, roomName: String) {
+
+    val usersInRoom = listOfUserInRoom.filter { user -> user.room == roomName }
     Card(
         modifier = Modifier
             .clip(RoundedCornerShape(6.dp))
@@ -40,7 +42,7 @@ fun Room(vm:ChatVM, listOfMessegesFromRoom: List<Message>, roomName: String) {
                 modifier = Modifier.background( MaterialTheme.colorScheme.onBackground),
         ){
             Text(
-                text = roomName, //TODO SÄT PÅ NÄR ROOM NAME FUNGERAR
+                text = roomName,
 //                text = "Makerspace",
                 modifier = Modifier
                     .padding(horizontal = 4.dp)
@@ -54,8 +56,11 @@ fun Room(vm:ChatVM, listOfMessegesFromRoom: List<Message>, roomName: String) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier.background( MaterialTheme.colorScheme.onBackground),
             ) {
-                profilePicturesForMembersInRoom.forEach { photoUrl ->
-                    ProfilePictureBubble(photoUrl = photoUrl, imageSize = 37.dp)
+
+                usersInRoom.forEach { user ->
+                    if (user.photoUrl!=null){
+                        ProfilePictureBubble(photoUrl = user.photoUrl, imageSize = 37.dp)
+                    }
 
                 }
             }
