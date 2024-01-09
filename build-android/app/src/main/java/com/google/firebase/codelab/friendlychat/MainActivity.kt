@@ -100,68 +100,17 @@ class MainActivity : AppCompatActivity() {
         if(!userIsInDatabase(auth.currentUser!!)){
             Log.d("MarcusTagUser",auth.currentUser!!.displayName.toString()+" added to database")
             addUserToDatabase(auth.currentUser!!)
+            if(auth.currentUser!!.photoUrl == null||auth.currentUser!!.photoUrl.toString() == ""||auth.currentUser!!.photoUrl.toString() == "null"){
+                if(auth.currentUser!!.displayName!=null){
+                    usersRef.child("photoUrl").setValue(auth.currentUser?.displayName)
+                }
+            }
         }else{
             Log.d("MarcusTagUser","User already in database")
         }
-
-
-//        setContent {
-//            val navController = rememberNavController()
-//            val vm: ChatVM = viewModel {
-//                ChatVM(db, messagesRef, auth, usersRef)
-//            }
-//            val darkMode by vm.darkMode.collectAsState()
-//            CampusTheme(darkTheme = darkMode){
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colorScheme.background
-//                ) {
-//                    NavigationGraph(navController = navController, vm = vm, locationVM = locationVM)
-//                }
-//            }
-//        }
     }
 
-    public fun oldViewBining(db: FirebaseDatabase, messagesRef: DatabaseReference){
-//        // The FirebaseRecyclerAdapter class and options come from the FirebaseUI library
-//        // See: https://github.com/firebase/FirebaseUI-Android
-//        val options = FirebaseRecyclerOptions.Builder<FriendlyMessage>()
-//            .setQuery(messagesRef, FriendlyMessage::class.java)
-//            .build()
-//        adapter = FriendlyMessageAdapter(options, getUserName())
-//        binding.progressBar.visibility = ProgressBar.INVISIBLE
-//        manager = LinearLayoutManager(this)
-//        manager.stackFromEnd = true
-//        binding.messageRecyclerView.layoutManager = manager
-//        binding.messageRecyclerView.adapter = adapter
-//
-//        // Scroll down when a new message arrives
-//        // See MyScrollToBottomObserver for details
-//        adapter.registerAdapterDataObserver(
-//            MyScrollToBottomObserver(binding.messageRecyclerView, adapter, manager)
-//        )
-//
-//        // Disable the send button when there's no text in the input field
-//        // See MyButtonObserver for details
-//        binding.messageEditText.addTextChangedListener(MyButtonObserver(binding.sendButton))
-//
-//        // When the send button is clicked, send a text message
-//        binding.sendButton.setOnClickListener {
-//            val friendlyMessage = FriendlyMessage(
-//                binding.messageEditText.text.toString(),
-//                getUserName(),
-//                getPhotoUrl(),
-//                null
-//            )
-//            db.reference.child(MESSAGES_CHILD).push().setValue(friendlyMessage)
-//            binding.messageEditText.setText("")
-//        }
-//
-//        // When the image button is clicked, launch the image picker
-//        binding.addMessageImageView.setOnClickListener {
-//            openDocument.launch(arrayOf("image/*"))
-//        }
-    }
+
 
     public override fun onStart() {
         super.onStart()
@@ -294,6 +243,46 @@ class MainActivity : AppCompatActivity() {
         val userRef = usersRef.child(user.uid)
         val userObject = User(user.uid, user.displayName, user.photoUrl.toString(), user.email)
         userRef.setValue(userObject)
+    }
+    public fun oldViewBining(db: FirebaseDatabase, messagesRef: DatabaseReference){
+//        // The FirebaseRecyclerAdapter class and options come from the FirebaseUI library
+//        // See: https://github.com/firebase/FirebaseUI-Android
+//        val options = FirebaseRecyclerOptions.Builder<FriendlyMessage>()
+//            .setQuery(messagesRef, FriendlyMessage::class.java)
+//            .build()
+//        adapter = FriendlyMessageAdapter(options, getUserName())
+//        binding.progressBar.visibility = ProgressBar.INVISIBLE
+//        manager = LinearLayoutManager(this)
+//        manager.stackFromEnd = true
+//        binding.messageRecyclerView.layoutManager = manager
+//        binding.messageRecyclerView.adapter = adapter
+//
+//        // Scroll down when a new message arrives
+//        // See MyScrollToBottomObserver for details
+//        adapter.registerAdapterDataObserver(
+//            MyScrollToBottomObserver(binding.messageRecyclerView, adapter, manager)
+//        )
+//
+//        // Disable the send button when there's no text in the input field
+//        // See MyButtonObserver for details
+//        binding.messageEditText.addTextChangedListener(MyButtonObserver(binding.sendButton))
+//
+//        // When the send button is clicked, send a text message
+//        binding.sendButton.setOnClickListener {
+//            val friendlyMessage = FriendlyMessage(
+//                binding.messageEditText.text.toString(),
+//                getUserName(),
+//                getPhotoUrl(),
+//                null
+//            )
+//            db.reference.child(MESSAGES_CHILD).push().setValue(friendlyMessage)
+//            binding.messageEditText.setText("")
+//        }
+//
+//        // When the image button is clicked, launch the image picker
+//        binding.addMessageImageView.setOnClickListener {
+//            openDocument.launch(arrayOf("image/*"))
+//        }
     }
 }
 

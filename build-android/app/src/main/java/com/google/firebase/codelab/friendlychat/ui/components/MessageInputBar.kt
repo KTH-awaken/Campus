@@ -130,4 +130,5 @@ fun CustomBasicTextField(vm: ChatVM, locationVM: LocationVM, scrollState: LazyLi
             }
         }
     }
+
 }

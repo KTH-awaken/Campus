@@ -169,15 +169,19 @@ class LocationVM(
 
         return emptyList()
     }
-    fun updateUser(){
-        val user = auth.currentUser
-        if (user != null) {
-            val userRef = db.getReference("users/${user.uid}")
-            userRef.child("room").setValue(getMyCurrentRoomName())
+    fun updateUser() {
+        fun updateUser() {
+            val user = auth.currentUser
+            if (user != null) {
+                val userRef = db.getReference("users/${user.uid}")
+                userRef.child("room").setValue(getMyCurrentRoomName())
+                if (auth.currentUser?.displayName == "null" || auth.currentUser == null) {
+                    userRef.child("photoUrl").setValue(auth.currentUser?.displayName)
+                }
+            }
         }
     }
-
-    fun updateUserOnInterval(delay: Long){
+    fun updateUserOnInterval(delay: Long) {
         viewModelScope.launch {
             while (isActive) {
                 updateUser()

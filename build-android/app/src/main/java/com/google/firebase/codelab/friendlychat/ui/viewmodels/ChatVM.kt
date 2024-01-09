@@ -62,6 +62,7 @@ class ChatVM(
                 val usersList = snapshot.children.mapNotNull { it.getValue(User::class.java) }
                 _users.value = usersList
                 Log.d("MarcusTAG users",usersList.toString())
+
             }
             override fun onCancelled(error: DatabaseError) {
                 Log.e("ChatVM", "Error listening for users", error.toException())
@@ -77,8 +78,10 @@ class ChatVM(
         currentRoom: String?
     ){
         var photoUrlToSave = photoUrl
+
         if (photoUrl==null||photoUrl==""||photoUrl=="null"){
             photoUrlToSave=userName
+//            updateUserProfilePhoto()
         }
         val message = Message(text, userName, photoUrlToSave, null, timeStamp, currentRoom)
 
@@ -158,6 +161,16 @@ class ChatVM(
             }
         }
         return membersProfilePhotos.distinct()
+    }
+
+    private fun updateUserProfilePhoto() {
+        val user = auth.currentUser
+        if (user != null) {
+            val userRef = db.getReference("users/${user.uid}")
+            if (auth.currentUser?.displayName == "null" || auth.currentUser == null) {
+                userRef.child("photoUrl").setValue(auth.currentUser?.displayName)
+            }
+        }
     }
 }
 

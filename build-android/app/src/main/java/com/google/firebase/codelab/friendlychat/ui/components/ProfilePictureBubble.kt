@@ -59,7 +59,6 @@ fun ProfilePictureBubble(photoUrl: String, imageSize: Dp) {
                contentAlignment = Alignment.Center
             ) {
                 var firstCharOfPhotoUrl = photoUrl[0]
-//                if(photoUrl=="null")firstCharOfPhotoUrl= 'B'//todo remvoe when databse is fixed
                 Text(
                     text = firstCharOfPhotoUrl.toString(),
                     color = Color.White,

@@ -68,7 +68,6 @@ fun Chat(vm: ChatVM, navController: NavController, locationVM: LocationVM) {
     }
 }
 
-
 @Composable
 fun TopBar(vm: ChatVM, navController: NavController) {
     val customCardColors = CardDefaults.cardColors(
@@ -94,14 +93,15 @@ fun TopBar(vm: ChatVM, navController: NavController) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ChatCard(vm: ChatVM, locationVM: LocationVM){
+fun ChatCard(vm: ChatVM, locationVM: LocationVM) {
     val messages by vm.messages.collectAsState()
     val scrollState = rememberLazyListState()
 
-    LaunchedEffect(messages) {
+    if (messages.size > 2) {
+        LaunchedEffect(messages){
         scrollState.animateScrollToItem(index = messages.size - 1)
+        }
     }
-
 
     ElevatedCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground,),
@@ -130,8 +130,6 @@ fun ChatCard(vm: ChatVM, locationVM: LocationVM){
         }
     }
 }
-
-
 
 @RequiresApi(Build.VERSION_CODES.O)//TODO CHECK IF CAN BE REMOVED IF CAUSES PROBLEMS AND CAUSE ITS UGLY
 @Composable
