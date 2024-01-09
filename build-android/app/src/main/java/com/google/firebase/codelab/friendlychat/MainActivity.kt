@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             addUserToDatabase(auth.currentUser!!)
             if(auth.currentUser!!.photoUrl == null||auth.currentUser!!.photoUrl.toString() == ""||auth.currentUser!!.photoUrl.toString() == "null"){
                 if(auth.currentUser!!.displayName!=null){
-                    usersRef.child("photoUrl").setValue(auth.currentUser?.displayName)
+//                    usersRef.child("photoUrl").setValue(auth.currentUser?.displayName) //todo där krasahr alt när august är online
                 }
             }
         }else{
