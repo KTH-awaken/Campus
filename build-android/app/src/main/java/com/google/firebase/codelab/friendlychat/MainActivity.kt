@@ -57,27 +57,6 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val locationVM = LocationVM(application,this)
-        locationVM.updateLocation()
-        setContent {
-            val navController = rememberNavController()
-            val vm: ChatVM = viewModel()
-            val darkMode by vm.darkMode.collectAsState()
-
-            /*updater location varje 60 seconds max 10 users just nu antal writes
-             blir max 1440 per dag och gränsen är 20K per dag*/
-            vm.updateUserOnInterval(60000,locationVM.getMyCurrentRoom())
-            CampusTheme(darkTheme = darkMode){
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    NavigationGraph(navController = navController, vm = vm, locationVM = locationVM )
-                }
-            }
-        }
-
         // Initialize Firebase Auth and check if the user is signed in
         auth = Firebase.auth
         if (auth.currentUser == null) {
@@ -92,6 +71,30 @@ class MainActivity : AppCompatActivity() {
         val messagesRef = db.reference.child(MESSAGES_CHILD)
         val usersRef = db.reference.child("users")
 
+        super.onCreate(savedInstanceState)
+        val locationVM = LocationVM(application,this,db, messagesRef, auth, usersRef)
+        locationVM.updateLocation()
+        setContent {
+            val navController = rememberNavController()
+            val vm: ChatVM = viewModel {
+                ChatVM(db, messagesRef, auth, usersRef)
+            }
+            val darkMode by vm.darkMode.collectAsState()
+
+            /*updater location varje 60 seconds max 10 users just nu antal writes
+             blir max 1440 per dag och gränsen är 20K per dag*/
+            locationVM.updateUserOnInterval(60000)
+            CampusTheme(darkTheme = darkMode){
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    NavigationGraph(navController = navController, vm = vm, locationVM = locationVM )
+                }
+            }
+        }
+
+
 
         if(!userIsInDatabase(auth.currentUser!!)){
             Log.d("MarcusTagUser",auth.currentUser!!.displayName.toString()+" added to database")
@@ -101,21 +104,21 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        setContent {
-            val navController = rememberNavController()
-            val vm: ChatVM = viewModel {
-                ChatVM(db, messagesRef, auth, usersRef)
-            }
-            val darkMode by vm.darkMode.collectAsState()
-            CampusTheme(darkTheme = darkMode){
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    NavigationGraph(navController = navController, vm = vm, locationVM = locationVM)
-                }
-            }
-        }
+//        setContent {
+//            val navController = rememberNavController()
+//            val vm: ChatVM = viewModel {
+//                ChatVM(db, messagesRef, auth, usersRef)
+//            }
+//            val darkMode by vm.darkMode.collectAsState()
+//            CampusTheme(darkTheme = darkMode){
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colorScheme.background
+//                ) {
+//                    NavigationGraph(navController = navController, vm = vm, locationVM = locationVM)
+//                }
+//            }
+//        }
     }
 
     public fun oldViewBining(db: FirebaseDatabase, messagesRef: DatabaseReference){

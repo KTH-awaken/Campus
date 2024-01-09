@@ -82,9 +82,7 @@ class ChatVM(
             photoUrlToSave=userName
         }
         val message = Message(text, userName, photoUrlToSave, null, timeStamp, currentRoom)
-        if (currentRoom != null) {
-            updateUser(currentRoom)
-        }
+
         messagesRef.push().setValue(message)
     }
 
@@ -136,22 +134,6 @@ class ChatVM(
         return _messages.value.filter { it.room == roomName }
     }
 
-    fun updateUser(roomName: String){
-        val user = auth.currentUser
-        if (user != null) {
-            val userRef = db.getReference("users/${user.uid}")
-            userRef.child("room").setValue(roomName)
-        }
-    }
-
-    fun updateUserOnInterval(delay: Long,roomName: String){
-        viewModelScope.launch {
-            while (isActive) {
-                updateUser(roomName)
-                delay(delay)
-            }
-        }
-    }
 
     fun getAllLatestMessagesFomEachUser(): List<Message> {//TODO REOMVE
         val latestMessagesMap = mutableMapOf<String, Message>()

@@ -104,7 +104,7 @@ fun CustomBasicTextField(vm: ChatVM,locationVM: LocationVM) {
                         .padding(horizontal = 20.dp)
                 ) {
                     if (text.isEmpty() && !isFocused) {
-                        Text("Message Campus Flemingsberg", color = MaterialTheme.colorScheme.secondary)
+                        Text("Message Campus Flemingsberg", color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp)
                     }
                     innerTextField()
                 }
@@ -117,6 +117,7 @@ fun CustomBasicTextField(vm: ChatVM,locationVM: LocationVM) {
                     val timeStamp: String = System.currentTimeMillis().toString()
                     vm.sendMessage(text, vm.auth.currentUser!!.displayName!!, vm.auth.currentUser!!.photoUrl.toString(),timeStamp,locationVM.getMyCurrentRoomName())
                     text = ""
+                    locationVM.updateUser()
                 }
             }) {
                 Icon(

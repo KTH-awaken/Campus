@@ -242,7 +242,7 @@ fun ProfilePictureStack(profileUrls: List<String>) {
 @Composable
 fun InitDataFromComposabelHelper(vm: ChatVM,locationVM: LocationVM) {
     vm.setSystemInDarkTheme(isSystemInDarkTheme())
-    vm.updateUser(locationVM.getMyCurrentRoomName())
+    locationVM.updateUser()
 }
 
 

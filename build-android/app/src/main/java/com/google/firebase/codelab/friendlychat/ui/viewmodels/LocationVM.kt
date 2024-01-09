@@ -6,18 +6,32 @@ import android.location.Location
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.codelab.friendlychat.data.networking.DataLocationSource
 import com.google.firebase.codelab.friendlychat.data.sensors.GpsManager
 import com.google.firebase.codelab.friendlychat.model.GeocodeResponse
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class LocationVM(application: Application, private val activity: ComponentActivity):AndroidViewModel(application) {
+class LocationVM(
+    application: Application,
+    private val activity: ComponentActivity,
+    val db: FirebaseDatabase,
+    val messagesRef: DatabaseReference,
+    val auth: FirebaseAuth,
+    val usersRef: DatabaseReference,
+):AndroidViewModel(application) {
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
     private lateinit var gpsManager : GpsManager
 
@@ -79,7 +93,7 @@ class LocationVM(application: Application, private val activity: ComponentActivi
         }else
             return null
     }
-
+    //Den ska ge rummet jag är i och även updtera min position
     fun getMyCurrentRoomName(): String{
         val myRoom = getCurrentRoom()
         if(myRoom==null)
@@ -90,6 +104,7 @@ class LocationVM(application: Application, private val activity: ComponentActivi
         val makerSpace = Room("Makerspace","Blickagången",59.22126919999999,17.9377919,"7")
         val willys = Room("Willys","Röntgenvägen 7, 141 52 Huddinge", 59.222811,17.938936,"0")
         val h = Room("H","Röntgenvägen 7, 141 52 Huddinge", 59.22159,17.93675,"0")
+        //todo matsalen t2 osv redovisnings rummet t65 Huddinge
 
         if( makerSpace.isInsideRoom(latitude,longitude) ){
             Log.d("LocationVM", makerSpace.room)
@@ -106,6 +121,24 @@ class LocationVM(application: Application, private val activity: ComponentActivi
         Log.d("LocationVM","No room found")
         return "Hemma"
     }
+
+    fun updateUser(){
+        val user = auth.currentUser
+        if (user != null) {
+            val userRef = db.getReference("users/${user.uid}")
+            userRef.child("room").setValue(getMyCurrentRoomName())
+        }
+    }
+
+    fun updateUserOnInterval(delay: Long){
+        viewModelScope.launch {
+            while (isActive) {
+                updateUser()
+                delay(delay)
+            }
+        }
+    }
+
 
 
     private val _geoLocation = MutableStateFlow<GeocodeResponse?>(null)
