@@ -96,7 +96,7 @@ fun TopButtonBar(vm: ChatVM, navController: NavController) {
                     tint = MaterialTheme.colorScheme.primary,
                 )
                 Text(
-                    text = " Add Campus ",
+                    text = " Add Room ",
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 13.sp,
                 )
