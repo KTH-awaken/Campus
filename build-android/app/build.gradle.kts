@@ -61,6 +61,10 @@ android {
 }
 
 dependencies {
+    // for push notifications from Firebase messaging
+    implementation ("com.google.firebase:firebase-messaging")
+
+
     //To show profile picture with rememberImagePainter that takes imageUrl
     implementation("io.coil-kt:coil-compose:1.4.0") // todo Check for the latest version
 

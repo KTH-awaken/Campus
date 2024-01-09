@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -30,6 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -43,6 +48,7 @@ import androidx.navigation.NavController
 import com.example.campus.ui.components.ColorChangingCampusLogo
 import com.example.campus.ui.viewmodels.ChatVM
 import com.google.firebase.codelab.friendlychat.R
+import com.google.firebase.codelab.friendlychat.ui.components.AddRoomDialog
 import com.google.firebase.codelab.friendlychat.ui.components.ProfilePictureBubble
 import com.google.firebase.codelab.friendlychat.ui.viewmodels.LocationVM
 import java.time.Instant
@@ -63,12 +69,13 @@ fun Home(vm: ChatVM, navController: NavController, locationVM: LocationVM) {
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        TopButtonBar(vm = vm,navController = navController)
+        TopButtonBar(vm = vm,locationVM = locationVM,navController = navController)
         Chats(vm = vm,navController = navController,locationVM = locationVM)
     }
 }
 @Composable
-fun TopButtonBar(vm: ChatVM, navController: NavController) {
+fun TopButtonBar(vm: ChatVM, locationVM: LocationVM,navController: NavController) {
+    var showDialog by remember { mutableStateOf(false) }
     val customCardColors = CardDefaults.cardColors(
         containerColor = MaterialTheme.colorScheme.onBackground,
     )
@@ -82,7 +89,7 @@ fun TopButtonBar(vm: ChatVM, navController: NavController) {
            ColorChangingCampusLogo(vm = vm,navController = navController)
         }
         Button(
-            onClick = { /*TODO add campus*/ },
+            onClick = { showDialog = true },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier.size(130.dp, 40.dp),
@@ -96,11 +103,20 @@ fun TopButtonBar(vm: ChatVM, navController: NavController) {
                     tint = MaterialTheme.colorScheme.primary,
                 )
                 Text(
-                    text = " Add Campus ",
+                    text = " Add Room ",
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 13.sp,
                 )
             }
+        }
+        if (showDialog) {
+            AddRoomDialog(
+                onDismissRequest = { showDialog = false },
+                onConfirm = { roomName, size ->
+                    locationVM.createRoom(roomName, size)
+                    showDialog = false
+                },
+            )
         }
     }
 }
