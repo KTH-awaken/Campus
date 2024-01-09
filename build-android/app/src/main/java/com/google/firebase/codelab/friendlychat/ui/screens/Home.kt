@@ -147,7 +147,10 @@ fun BalderDebugButtons(locationVM: LocationVM) {
         Text("Save room")
     }
     Button(onClick = { locationVM.getMyCurrentRoomName() }) {
-        Text("Save room")
+        Text("Get getMyCurrentRoomName")
+    }
+    Button(onClick = { locationVM.createRoom("myRoom",25.0) }) {
+        Text("Add myRoom")
     }
 }
 
