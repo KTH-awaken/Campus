@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.codelab.friendlychat.data.networking.DataLocationSource
 import com.google.firebase.codelab.friendlychat.data.sensors.GpsManager
+import com.google.firebase.codelab.friendlychat.model.FakeRoom
 import com.google.firebase.codelab.friendlychat.model.GeocodeResponse
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -52,8 +53,8 @@ class LocationVM(
                     _geoLocation.value = it
                 }
             }
-
         }
+        listenForRooms()
     }
     fun updateLocation(){
         gpsManager.requestLocationUpdates()
@@ -84,7 +85,7 @@ class LocationVM(
         return "No room"
     }
 
-    private fun getCurrentRoom(roomName:String):Room?{
+    private fun getCurrentRoom(roomName:String,size:Double):Room?{
         updateLocation()
         val l = _geoLocation.value
         if(l != null){
@@ -92,12 +93,15 @@ class LocationVM(
             val lat = l?.results?.first()?.geometry?.location?.lat
             val lng = l?.results?.first()?.geometry?.location?.lng
 
-            val room = Room(roomName,address?:"null",lat?:0.0,lng?:0.0,"First")
+            val room = Room(roomName,address?:"null",lat?:0.0,lng?:0.0,"First",size)
             _rooms.value += room
             Log.d("DataVM","Added room ${room.toString()}")
             return room
         }else
             return null
+    }
+    private fun getCurrentRoom(roomName:String):Room?{
+        return getCurrentRoom(roomName, size = 25.0)
     }
     //Den ska ge rummet jag är i och även updtera min position
     fun getMyCurrentRoomName(): String{
@@ -114,6 +118,8 @@ class LocationVM(
         //todo matsalen t2 osv redovisnings rummet t65 Huddinge
 
         //TODO kontrollera foreach loop för varenda rum i lista
+        Log.d("LocationVM","number of rooms=${_rooms.value.size}")
+        Log.d("LocationVM","rooms=${_rooms.value}")
         if( makerSpace.isInsideRoom(latitude,longitude) ){
             Log.d("LocationVM", makerSpace.room)
             return makerSpace.room
@@ -126,6 +132,13 @@ class LocationVM(
             Log.d("LocationVM", h.room)
             return h.room
         }
+        for(room in _rooms.value){
+            Log.d("LocationVM","Rooms from db = $room")
+            if(room.isInsideRoom(latitude,longitude)){
+                Log.d("LocationVM","Is inside room from db = ${room}")
+                return room.room
+            }
+        }
         Log.d("LocationVM","No room found")
         return "Hemma"
     }
@@ -135,20 +148,20 @@ class LocationVM(
             override fun onDataChange(snapshot: DataSnapshot) {
                 val roomsList = snapshot.children.mapNotNull { it.getValue(Room::class.java) }
                 _rooms.value = roomsList
-                Log.d("MarcusTAG users",roomsList.toString())
+                Log.d("MarcusTAG rooms",roomsList.toString())
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("ChatVM", "Error listening for users", error.toException())
+                Log.e("ChatVM", "Error listening for rooms", error.toException())
             }
         })
     }
 
-    fun createRoom(roomName:String){
-        val room = getCurrentRoom(roomName)
+    fun createRoom(roomName:String,size:Double){
+        val room = getCurrentRoom(roomName,size)
         if(room==null)
             return
-        roomsRef.push().setValue(room)
+        roomsRef.push().setValue(FakeRoom(roomName,room.address,room.lat.toString(),room.lon.toString(),room.floor,size.toString()))
     }
 
     fun getRooms():List<Room>{
