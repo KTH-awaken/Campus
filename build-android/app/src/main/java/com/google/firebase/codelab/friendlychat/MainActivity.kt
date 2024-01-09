@@ -70,9 +70,10 @@ class MainActivity : AppCompatActivity() {
         db = Firebase.database
         val messagesRef = db.reference.child(MESSAGES_CHILD)
         val usersRef = db.reference.child("users")
+        val roomsRef = db.reference.child("rooms")
 
         super.onCreate(savedInstanceState)
-        val locationVM = LocationVM(application,this,db, messagesRef, auth, usersRef)
+        val locationVM = LocationVM(application,this,db,messagesRef,auth,usersRef,roomsRef)
         locationVM.updateLocation()
         setContent {
             val navController = rememberNavController()
