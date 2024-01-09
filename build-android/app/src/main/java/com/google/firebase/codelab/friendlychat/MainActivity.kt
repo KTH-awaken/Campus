@@ -65,7 +65,9 @@ class MainActivity : AppCompatActivity() {
             val vm: ChatVM = viewModel()
             val darkMode by vm.darkMode.collectAsState()
 
-            vm.updateUser(locationVM.getMyCurrentRoom())
+            /*updater location varje 60 seconds max 10 users just nu antal writes
+             blir max 1440 per dag och gränsen är 20K per dag*/
+            vm.updateUserOnInterval(60000,locationVM.getMyCurrentRoom())
             CampusTheme(darkTheme = darkMode){
                 Surface(
                     modifier = Modifier.fillMaxSize(),

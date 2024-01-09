@@ -3,6 +3,7 @@ package com.example.campus.ui.viewmodels
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.codelab.friendlychat.model.Message
 import com.google.firebase.database.DataSnapshot
@@ -10,8 +11,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class ChatVM(
      val db: FirebaseDatabase,
@@ -150,6 +154,15 @@ class ChatVM(
         if (user != null) {
             val userRef = db.getReference("users/${user.uid}")
             userRef.child("room").setValue(roomName)
+        }
+    }
+
+    fun updateUserOnInterval(delay: Long,roomName: String){
+        viewModelScope.launch {
+            while (isActive) {
+                updateUser(roomName)
+                delay(delay)
+            }
         }
     }
 }
