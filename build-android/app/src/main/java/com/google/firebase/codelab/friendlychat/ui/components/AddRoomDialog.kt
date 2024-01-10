@@ -25,6 +25,9 @@ fun AddRoomDialog(
     var roomName by remember { mutableStateOf("") }
     var roomSize by remember { mutableStateOf("") }
 
+    val customCardColors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.onBackground,
+    )
     AlertDialog(
         title = {
             Text(text = "Add room")
@@ -54,6 +57,7 @@ fun AddRoomDialog(
                 onClick = {
                     val size = roomSize.toDoubleOrNull()
                     if (roomName.isNotBlank() && size != null) {
+//                        roomSize = roomSize/2.toString()todo
                         onConfirm(roomName, size)
                     }
                 }
@@ -70,5 +74,6 @@ fun AddRoomDialog(
                 Text("Dismiss")
             }
         },
+        containerColor = MaterialTheme.colorScheme.onBackground
     )
 }

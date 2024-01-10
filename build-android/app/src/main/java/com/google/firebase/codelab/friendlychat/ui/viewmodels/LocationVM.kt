@@ -11,11 +11,9 @@ import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.codelab.friendlychat.data.networking.DataLocationSource
 import com.google.firebase.codelab.friendlychat.data.sensors.GpsManager
-import com.google.firebase.codelab.friendlychat.model.FakeRoom
 import com.google.firebase.codelab.friendlychat.model.GeocodeResponse
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.codelab.friendlychat.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -28,6 +26,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class LocationVM(
     application: Application,
@@ -60,18 +63,18 @@ class LocationVM(
         gpsManager.requestLocationUpdates()
     }
 
-    fun saveRoom(){
-        val l = _geoLocation.value
-        if(l != null){
-            val address = l?.results?.first()?.formatted_address
-            val lat = l?.results?.first()?.geometry?.location?.lat
-            val lng = l?.results?.first()?.geometry?.location?.lng
-
-            val room = Room("Room",address?:"null",lat?:0.0,lng?:0.0,"0")
-            _rooms.value += room
-            Log.d("DataVM","Added room ${room.toString()}")
-        }
-    }
+//    fun saveRoom(){
+//        val l = _geoLocation.value
+//        if(l != null){
+//            val address = l?.results?.first()?.formatted_address
+//            val lat = l?.results?.first()?.geometry?.location?.lat
+//            val lng = l?.results?.first()?.geometry?.location?.lng
+//
+//            val room = Room("Room",address?:"null",lat?:0.0,lng?:0.0,"0")
+//            _rooms.value += room
+//            Log.d("DataVM","Added room ${room.toString()}")
+//        }
+//    }
 
     fun checkRoom(){
 
@@ -183,6 +186,7 @@ class LocationVM(
         if (user != null) {
             val userRef = db.getReference("users/${user.uid}")
             userRef.child("room").setValue(getMyCurrentRoomName())
+            userRef.child("lastOnline").setValue(formatedTime(System.currentTimeMillis()))
             if (auth.currentUser?.displayName == "null" || auth.currentUser == null) {
                 userRef.child("photoUrl").setValue(auth.currentUser?.displayName)
             }
@@ -214,4 +218,15 @@ class LocationVM(
     private val _currentRoom = MutableStateFlow<Room>(Room())
     val currentRoom: StateFlow<Room>
         get() = _currentRoom
+
+    private fun formatedTime(timeStamp: Long): String? {
+
+        val messageTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStamp), ZoneId.systemDefault())
+        val formattedTime = if (messageTime.toLocalDate().isEqual(LocalDate.now())) {
+            messageTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+        } else {
+            messageTime.format(DateTimeFormatter.ofPattern("d MMM HH:mm")).replace(".", "")
+        }
+        return formattedTime
+    }
 }

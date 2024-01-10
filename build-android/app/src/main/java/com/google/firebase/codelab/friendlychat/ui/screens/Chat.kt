@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -171,14 +170,14 @@ fun MessageBubble(message: Message,vm: ChatVM) {
         ) {
 
             if (!vm.isMyMessage(message)){
-                ProfilePictureBubble(message.photoUrl ?: "", 37.dp)
+                ProfilePictureBubble(message.photoUrl ?: "", 37.dp,null)
                 Spacer(modifier = Modifier.size(2.dp))
             }else{
 
                 Column (
                     verticalArrangement = Arrangement.Bottom){
                     Row(
-                        modifier = Modifier.width(60.dp),
+                        modifier = Modifier.width(65.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
                         message.room?.let {
@@ -192,7 +191,7 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                         }
                     }
                     Row(
-                        modifier = Modifier.width(60.dp),
+                        modifier = Modifier.width(65.dp),
                         horizontalArrangement = Arrangement.End,
                     ) {
                         Text(
@@ -235,7 +234,7 @@ fun MessageBubble(message: Message,vm: ChatVM) {
             }
             if (vm.isMyMessage(message)){
                 Spacer(modifier = Modifier.size(2.dp))
-                ProfilePictureBubble(message.photoUrl ?: "", 37.dp)
+                ProfilePictureBubble(message.photoUrl ?: "", 37.dp,null)
             }else{
                 Box(
                     modifier = Modifier
@@ -246,7 +245,7 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                         verticalArrangement = Arrangement.Bottom
                     ){
                         Row(
-                            modifier = Modifier.width(60.dp),
+                            modifier = Modifier.width(65.dp),
                             horizontalArrangement = Arrangement.Start
                         ) {
                             message.room?.let {
@@ -260,7 +259,7 @@ fun MessageBubble(message: Message,vm: ChatVM) {
                             }
                         }
                         Row(
-                            modifier = Modifier.width(60.dp),
+                            modifier = Modifier.width(65.dp),
                             horizontalArrangement = Arrangement.Start,
                         ) {
                             Text(
