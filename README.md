@@ -1,18 +1,14 @@
-# Firebase Codelab: FriendlyChat
+Campus is a real-time location chat available on Android.
 
-[![Actions Status][gh-actions-badge]][gh-actions]
-
-This is the source code for the Firebase FriendlyChat codelabs. To get started open the codelab instructions:
-
- - [Build FriendlyChat Codelab](https://firebase.google.com/codelabs/firebase-android/)
+Download campus.apk: https://ufile.io/etuqw0vp
 
 
-## How to make contributions?
-Please read and follow the steps in the [CONTRIBUTING.md](CONTRIBUTING.md)
+1. Choose Free Download.
+2. Click Accept Download.
+3. Click Install.
+4. Find the app on your home screen.
+5. Log in with Google or Email.
+6. Start chatting with friends.
 
 
-## License
-See [LICENSE](LICENSE)
-
-[gh-actions]: https://github.com/firebase/codelab-friendlychat-android/actions
-[gh-actions-badge]: https://github.com/firebase/codelab-friendlychat-android/workflows/Android%20CI/badge.svg
+![image](https://github.com/KTH-awaken/Campus/assets/100699584/c35a7c0f-8128-4831-8762-e260bb2e370d)
