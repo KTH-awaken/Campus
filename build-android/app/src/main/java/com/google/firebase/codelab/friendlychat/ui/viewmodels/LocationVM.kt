@@ -109,7 +109,7 @@ class LocationVM(
     fun getMyCurrentRoomName(): String{
         val myRoom = getCurrentRoom("Uknown0")
         if(myRoom==null)
-            return "Hemma"
+            return "No room"
         val latitude = myRoom.lat
         val longitude = myRoom.lon
 
