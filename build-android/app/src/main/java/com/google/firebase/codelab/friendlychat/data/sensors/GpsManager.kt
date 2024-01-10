@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
+import android.os.Looper
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.ComponentActivity
@@ -27,7 +28,8 @@ class GpsManager(private val activity: ComponentActivity, private val onLocation
     private val requestPermissionLauncher =
         activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                updateGPS()
+                updateAccurateGPS()
+                //updateGPS()
             } else {
                 Log.e("GPSManager", "Location permission denied")
             }
@@ -67,6 +69,45 @@ class GpsManager(private val activity: ComponentActivity, private val onLocation
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 Log.e("GPSManager", "Failed to get permissions for location tracking")
             }
+        }
+    }
+
+    private fun updateAccurateGPS(){
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+
+        if (activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            val locationRequest = createLocationRequest()
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(p0: LocationResult) {
+                    p0 ?: return
+                    for (location in p0.locations){
+                        Log.d("GPSManager", "Accurate location = ${location.toString()}")
+                        onLocationUpdate.invoke(location)
+                    }
+                }
+            }
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        } else {
+            Log.d("GPSManager", "Requesting permissions...")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                activity.requestPermissions(
+                    arrayOf(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    ), PERMISSIONS_FINE_LOCATION
+                )
+            } else {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                Log.e("GPSManager", "Failed to get permissions for location tracking")
+            }
+        }
+    }
+    private fun createLocationRequest(): LocationRequest {
+        return LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 10000  // 10 seconds
+            fastestInterval = 5000  // 5 seconds
         }
     }
 }
