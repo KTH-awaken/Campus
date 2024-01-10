@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -238,7 +236,7 @@ fun ProfilePictureStack(profileUrls: List<String>) {
     BoxWithConstraints() {
         Box() {
             if (firstUniqueUrl != null) {
-                ProfilePictureBubble(photoUrl = firstUniqueUrl, imageSize =37.dp )
+                ProfilePictureBubble(photoUrl = firstUniqueUrl, imageSize =37.dp ,null)
             }
         }
         Column() {
@@ -252,9 +250,8 @@ fun ProfilePictureStack(profileUrls: List<String>) {
                         .zIndex(2f)
                 ) {
                     if (secondUniqueUrl != null) {
-                        ProfilePictureBubble(photoUrl = secondUniqueUrl, imageSize =37.dp )
+                        ProfilePictureBubble(photoUrl = secondUniqueUrl, imageSize =37.dp ,null)
                     }
-
                 }
             }
         }
@@ -263,7 +260,7 @@ fun ProfilePictureStack(profileUrls: List<String>) {
 
 @Composable
 fun InitDataFromComposabelHelper(vm: ChatVM,locationVM: LocationVM) {
-    vm.setSystemInDarkTheme(isSystemInDarkTheme())
+//    vm.setSystemInDarkTheme(isSystemInDarkTheme())
     locationVM.updateUser()
 }
 
