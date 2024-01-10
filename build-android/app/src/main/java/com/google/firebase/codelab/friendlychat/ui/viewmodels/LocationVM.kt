@@ -149,7 +149,7 @@ class LocationVM(
 
          */
         Log.d("LocationVM","No room found")
-        return "Hemma"
+        return "No room"
     }
 
     private fun listenForRooms() {

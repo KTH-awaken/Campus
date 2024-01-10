@@ -36,7 +36,7 @@ import com.google.firebase.codelab.friendlychat.R
 import com.google.firebase.codelab.friendlychat.ui.viewmodels.LocationVM
 
 @Composable
-fun Settings(vm: ChatVM, navController: NavController, locationVM: LocationVM) {
+fun SettingsScreen(vm: ChatVM, navController: NavController, locationVM: LocationVM) {
         Column(
             modifier = Modifier
                 .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)

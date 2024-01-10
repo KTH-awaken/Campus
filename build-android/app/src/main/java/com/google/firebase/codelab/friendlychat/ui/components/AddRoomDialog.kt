@@ -57,8 +57,8 @@ fun AddRoomDialog(
                 onClick = {
                     val size = roomSize.toDoubleOrNull()
                     if (roomName.isNotBlank() && size != null) {
-//                        roomSize = roomSize/2.toString()todo
-                        onConfirm(roomName, size)
+                        val halfSize = size / 2
+                        onConfirm(roomName, halfSize)
                     }
                 }
             ) {

@@ -17,6 +17,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 class ChatVM(
      val db: FirebaseDatabase,
@@ -70,7 +78,7 @@ class ChatVM(
         })
     }
 
-    fun sendMessage(
+    /*fun sendMessage(//old working
         text: String,
         userName: String?,
         photoUrl: String?,
@@ -81,11 +89,36 @@ class ChatVM(
 
         if (photoUrl==null||photoUrl==""||photoUrl=="null"){
             photoUrlToSave=userName
-//            updateUserProfilePhoto()
         }
         val message = Message(text, userName, photoUrlToSave, null, timeStamp, currentRoom)
 
         messagesRef.push().setValue(message)
+        //todo send notificaton from here saying that ther is an unred messeg from campus flemingsber uing this server key
+        AAAA3OIgC3g:APA91bFt16Ut5eIJBTLySg2xCuctBUxU46WbhzTTQg6R1NPNpbmOf2JWQEZQ6jJdmP6Qn9m6jcStJOXURXpEIby3J4lfTy5zaHa1-4ZsspNtsjlz1Ic8tGV-SaQ5DLQDGCsp72z9f3wO server key
+    }
+*/
+
+    fun sendMessage(
+        text: String,
+        userName: String?,
+        photoUrl: String?,
+        timeStamp: String?,
+        currentRoom: String?
+    ) {
+        var photoUrlToSave = photoUrl
+
+        if (photoUrl==null||photoUrl==""||photoUrl=="null"){
+            photoUrlToSave=userName
+        }
+        val message = Message(text, userName, photoUrlToSave, null, timeStamp, currentRoom)
+
+        messagesRef.push().setValue(message).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                sendNotificationToEveryone("New message from $userName", text)
+            } else {
+                Log.e("ChatVM", "Failed to send message")
+            }
+        }
     }
 
     fun setDarkMode(value: Boolean){
@@ -171,6 +204,60 @@ class ChatVM(
                 userRef.child("photoUrl").setValue(auth.currentUser?.displayName)
             }
         }
+    }
+
+    private fun sendNotificationToEveryone(messageText: String, roomName: String) {
+        usersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val title = "New message in $roomName"
+                snapshot.children.forEach { child ->
+                    val user = child.getValue(User::class.java)
+                    user?.fcmToken?.let { token ->
+                        sendNotification(token, title, messageText)
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("MarcusTAG", "Failed to send message", databaseError.toException())
+            }
+        })
+    }
+
+    fun sendNotification(token: String, title: String, message: String) {
+        Log.d("MarcusTAG", "sendNotification: $token")
+        val client = OkHttpClient()
+
+        val requestBody = FormBody.Builder()
+            .add("to", token)
+            .add("priority", "high")
+            .add("notification", JSONObject().apply {
+                put("title", title)
+                put("body", message)
+            }.toString())
+            .build()
+
+        val request = Request.Builder()
+            .url("https://fcm.googleapis.com/fcm/send")
+            .post(requestBody)
+            .addHeader("Authorization", "key=AAAA3OIgC3g:APA91bFt16Ut5eIJBTLySg2xCuctBUxU46WbhzTTQg6R1NPNpbmOf2JWQEZQ6jJdmP6Qn9m6jcStJOXURXpEIby3J4lfTy5zaHa1-4ZsspNtsjlz1Ic8tGV-SaQ5DLQDGCsp72z9f3wO")
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                Log.d("MarcusTAG", "FCM response: ${response.body?.string()}")
+                if (response.isSuccessful) {
+//                    Log.d("MarcusFCM", "Notification sent successfully. Response: ${response.body?.string()}")
+                } else {
+//                    Log.e("MarcusFCM", "Failed to send notification. Response: ${response.body?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("NetworkCall", "sendNotification: Failed to send notification", e)
+            }
+        })
     }
 }
 

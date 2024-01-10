@@ -131,7 +131,7 @@ fun Chats(vm: ChatVM,navController: NavController,locationVM: LocationVM){
     ){
 
         ChatPreview(vm =vm ,navController = navController)
-        //BalderDebugButtons(locationVM = locationVM)//TODO SÄT PÅ FÖR DEBUGING
+//        BalderDebugButtons(locationVM = locationVM)//TODO SÄT PÅ FÖR DEBUGING
         Box(
             modifier = Modifier
                 .fillMaxSize(),
@@ -169,6 +169,7 @@ fun BalderDebugButtons(locationVM: LocationVM) {
     Button(onClick = { locationVM.createRoom("testWillys",25.0) }) {
         Text("Add myRoom")
     }
+
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

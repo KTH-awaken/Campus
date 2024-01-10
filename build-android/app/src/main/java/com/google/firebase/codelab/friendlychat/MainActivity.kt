@@ -1,9 +1,13 @@
 package com.google.firebase.codelab.friendlychat
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -17,11 +21,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.campus.ui.screens.Home
-import com.example.campus.ui.screens.Settings
+import com.example.campus.ui.screens.SettingsScreen
 import com.example.campus.ui.theme.CampusTheme
 import com.example.campus.ui.viewmodels.ChatVM
 import com.firebase.ui.auth.AuthUI
@@ -42,6 +47,7 @@ import com.google.firebase.codelab.friendlychat.ui.screens.Chat
 import com.google.firebase.codelab.friendlychat.data.sensors.GpsManager
 import com.google.firebase.codelab.friendlychat.model.User
 import com.google.firebase.codelab.friendlychat.ui.viewmodels.LocationVM
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,6 +63,9 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
+        createNotificationChannel()
         // Initialize Firebase Auth and check if the user is signed in
         auth = Firebase.auth
         if (auth.currentUser == null) {
@@ -84,7 +93,7 @@ class MainActivity : AppCompatActivity() {
 
             /*updater location varje 60 seconds max 10 users just nu antal writes
              blir max 1440 per dag och gränsen är 20K per dag*/
-            locationVM.updateUserOnInterval(60000)
+            locationVM.updateUserOnInterval(30000) //varje 30
             CampusTheme(darkTheme = darkMode){
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -95,21 +104,41 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-
         if(!userIsInDatabase(auth.currentUser!!)){
             Log.d("MarcusTagUser",auth.currentUser!!.displayName.toString()+" added to database")
-//            val mockPhotoUrl = Uri.parse(auth.currentUser!!.displayName)
-//            auth.currentUser.photoUrl=mockPhotoUrl
+
             addUserToDatabase(auth.currentUser!!)
-
-
         }else{
             Log.d("MarcusTagUser","User already in database")
         }
     }
 
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Chat Messages" // Channel name
+            val descriptionText = "Notifications for new chat messages" // Channel description
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel("CHAT_CHANNEL_ID", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
 
+    private fun checkAndPromptForNotifications() {
+        if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+            val intent = Intent().apply {
+                action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+            }
+            startActivity(intent)
+        }
+    }
 
     public override fun onStart() {
         super.onStart()
@@ -120,6 +149,7 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
+        checkAndPromptForNotifications()
     }
 
     public override fun onPause() {
@@ -237,12 +267,40 @@ class MainActivity : AppCompatActivity() {
         return userExists
     }
 
-    fun addUserToDatabase(user: FirebaseUser){
+    fun addUserToDatabaseOld(user: FirebaseUser){//old working
         val usersRef = db.reference.child("users")
         val userRef = usersRef.child(user.uid)
         val userObject = User(user.uid, user.displayName, user.photoUrl.toString(), user.email)
         userRef.setValue(userObject)
     }
+    fun addUserToDatabase(user: FirebaseUser) {//new expriment with notifications
+        val usersRef = db.reference.child("users")
+        val userRef = usersRef.child(user.uid)
+
+        // Get the FCM token and then add the user to the database with the token
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Get new FCM registration token
+                val token = task.result
+
+                // Create a new User object with the token
+                val userObject = User(
+                    uid = user.uid,
+                    displayName = user.displayName,
+                    photoUrl = user.photoUrl?.toString(),
+                    email = user.email,
+                    fcmToken = token // Add the FCM token here
+                )
+
+                // Save the user object to the database
+                userRef.setValue(userObject)
+            } else {
+                // Handle failure to get FCM token
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+            }
+        }
+    }
+
     public fun oldViewBining(db: FirebaseDatabase, messagesRef: DatabaseReference){
 //        // The FirebaseRecyclerAdapter class and options come from the FirebaseUI library
 //        // See: https://github.com/firebase/FirebaseUI-Android
@@ -296,7 +354,7 @@ fun NavigationGraph(navController: NavHostController, vm: ChatVM, locationVM: Lo
             Chat(vm = vm, navController = navController, locationVM = locationVM)
         }
         composable("settings") {
-            Settings(vm = vm,navController = navController, locationVM = locationVM)
+            SettingsScreen(vm = vm,navController = navController, locationVM = locationVM)
         }
     }
 }

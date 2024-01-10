@@ -60,7 +60,7 @@ fun ProfilePictureBubble(photoUrl: String, imageSize: Dp, user: User?) {
         modifier = Modifier
             .size(imageSize)
             .padding(4.dp)
-            .border(1.dp, borderColor, CircleShape)
+            .border(2.dp, borderColor, CircleShape)
             .clickable { if (user != null) showDialog = true }
         ,
     ) {

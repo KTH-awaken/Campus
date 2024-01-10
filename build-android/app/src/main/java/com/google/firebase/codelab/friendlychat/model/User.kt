@@ -9,4 +9,5 @@ data class User(
     val room: String? = null,
     val lastOnline: String? = null,
     val isDarkTheme: Boolean? = false,
+    val fcmToken: String? = null,
 )
