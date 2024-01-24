@@ -2,7 +2,7 @@ App does not currently work, Google Api has been turned of because of money
 
 Campus is a real-time location chat available on Android.
 
-Download campus.apk: https://ufile.io/a72iqrdh
+Download campus.apk: https://ufile.io/rcnsbl4l
 
 
 1. Choose Free Download.
